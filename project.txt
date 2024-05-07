@@ -1,0 +1,45 @@
+All microservices are provided
+
+1. Authentication Service:
+
+//keycloack
+Handles user registration, login, and session management.
+Integrates social login options for convenience (if desired).
+Issues access tokens for secure authorization in other microservices.
+
+2. API Gateway/ Edge Server :
+
+Acts as a single entry point for incoming requests.
+Performs initial validation (security checks, format checks) before routing requests to appropriate microservices.
+
+3. Service Interaction (Cat Service Box):
+
+It could handle tasks related to product offerings, account management, or eligibility checks depending on the context.
+and  many more have to add in this
+
+
+4. BaseProduct Service
+
+ It is related to all the service for new users had to add more services 
+
+5. Bundled Product Service
+
+ Related to all the products  and offeres and also it can check what are the offers
+available for perticular user and has to send to eligibility Service
+
+6.Message Microservice
+
+To send alerts or messages to users about the offers
+
+7. Eligibility Service
+
+Here we need to update the user details with offers and had to add more services
+
+* All the above services are interlinked to each otehr using Feign Client except message service and using event broker like kafka to send message/notiication to message microservice and all the docker image is kept in 
+kubernates cluster  
+
+
+8. Eureka Server 
+which has clients as above services and it acts as load balancer and service discovery and registration
+
+7.DataBase ......for now local only
