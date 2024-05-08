@@ -1,0 +1,20 @@
+keycloak:
+  auth-server-url: http://localhost:8080/auth
+  realm: Mercurius
+  admin-user: admin
+  admin-password: admin
+  client-id: admin-cli
+  token-endpoint: http://localhost:8080/realms/Mercurius/protocol/openid-connect/token
+  clients:
+    default:
+      service-accounts-enabled: true
+      public-client: false
+      enabled: true
+
+server:
+  port: 8081
+
+spring:
+  application:
+    name: keyAuth
+
