@@ -24,4 +24,25 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         );
         return new ResponseEntity<>(errorResponseDTO, HttpStatus.BAD_REQUEST);
     }
+	@ExceptionHandler(NetworkException.class)
+	public ResponseEntity<Object> handleNetworkException(Exception exception, WebRequest webRequest) {
+	    ErrorResponseDto errorResponseDTO = new ErrorResponseDto(
+	            webRequest.getDescription(false),
+	            HttpStatus.BAD_GATEWAY,
+	            exception.getMessage(),
+	            LocalDateTime.now()
+	    );
+	    return new ResponseEntity<>(errorResponseDTO, HttpStatus.BAD_GATEWAY);
+	}
+	@ExceptionHandler(NullPointerException.class)
+	public ResponseEntity<Object> handleNullPointerException(Exception exception, WebRequest webRequest) {
+	    ErrorResponseDto errorResponseDTO = new ErrorResponseDto(
+	            webRequest.getDescription(false),
+	            HttpStatus.BAD_REQUEST,
+	            exception.getMessage(),
+	            LocalDateTime.now()
+	    );
+	    return new ResponseEntity<>(errorResponseDTO, HttpStatus.BAD_GATEWAY);
+	}
+
 }

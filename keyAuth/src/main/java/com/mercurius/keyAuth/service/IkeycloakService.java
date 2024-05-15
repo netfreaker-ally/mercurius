@@ -7,9 +7,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 public interface IkeycloakService {
-	ResponseEntity<String> createClient(String accessToken,ClientRepresentation clientRepresentation);
+	ResponseEntity<String> createClient(String accessToken);
 	 String deleteClient(String clientId);
-	 String updateClient(String clientId,ClientRepresentation clientRepresentaion);
+	 ClientRepresentation updateClient(String clientId);
 	 ClientRepresentation getClient(String clientId);
 	 List<ClientRepresentation> getAllClients();
 	 String getAdminAccessToken();
