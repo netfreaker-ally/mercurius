@@ -1,0 +1,6 @@
+http://localhost:8080/master/clients
+http://localhost:8080/realms/master/protocol/openid-connect/auth
+http://localhost:8080/realms/master/protocol/openid-connect/token
+http://localhost:8080/admin/realms
+http://localhost:8080/admin/realms/master/clients?realm=master&clientId=my-web-app5
+http://localhost:8080/admin/realms/master/clients?id=""
