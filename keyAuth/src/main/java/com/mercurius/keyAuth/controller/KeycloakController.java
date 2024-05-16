@@ -42,7 +42,7 @@ public class KeycloakController {
 	public String welcome() {
 	    return new String("Welcome.........../");
 	}
-	@PostMapping("/register")
+	@PostMapping("/register-user")
 	public ResponseEntity<ResponseDto> registerUser() {
 		try {
 		
