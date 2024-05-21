@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import com.Mercurius.Bridge.entity.AccountRepresentation;
 import com.Mercurius.Bridge.entity.ProductRepresentation;
 
 @FeignClient(name = "product-service")
@@ -30,4 +31,5 @@ public interface ProductOfferingsClient {
 
     @DeleteMapping("/products/{id}")
     ResponseEntity<String> deleteProduct(@PathVariable("id") String productId);
+  
 }

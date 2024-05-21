@@ -1,5 +1,7 @@
 package com.Mercurius.Bridge.service.clients;
 
+import java.util.List;
+
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -10,7 +12,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import com.Mercurius.Bridge.entity.AccountRepresentation;
-import com.Mercurius.Bridge.entity.ProductRepresentation;
 
 @FeignClient("account-service")
 public interface AccountManagementClient {
@@ -26,5 +27,7 @@ public interface AccountManagementClient {
 
     @DeleteMapping("/accounts/{id}")
     ResponseEntity<String> deleteAccount(@PathVariable("id") String accountId);
+    @GetMapping("/accounts/all-users")
+    ResponseEntity<List<AccountRepresentation>> getAllAccounts();
 
 }

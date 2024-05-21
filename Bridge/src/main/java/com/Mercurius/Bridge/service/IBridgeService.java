@@ -14,25 +14,25 @@ public interface IBridgeService {
 	    String updateBaseProduct(String productId, ProductRepresentation baseProduct);
 	    String deleteBaseProduct(String productId);
 	    ProductRepresentation getBaseProductById(String productId);
-	    List<ProductRepresentation> listBaseProducts(int page, int size);
+	    List<ProductRepresentation> listBaseProducts();
 
 	    // Bundled Product Management
 	    String createBundledProduct(BundledProductRepresentation bundledProduct);
 	    String updateBundledProduct(String productId, BundledProductRepresentation bundledProduct);
-	    void deleteBundledProduct(String productId);
+	    String deleteBundledProduct(String productId);
 	    BundledProductRepresentation getBundledProductById(String productId);
-	    List<BundledProductRepresentation> listBundledProducts(int page, int size);
+	    List<BundledProductRepresentation> listBundledProducts();
 
 	    // User Profile Management
 	    String createUserProfile(AccountRepresentation userProfile) throws Exception;
 	    String updateUserProfile(String userId, AccountRepresentation userProfile);
-	    void deleteUserProfile(String userId);
+	    String deleteUserProfile(String userId);
 	    AccountRepresentation getUserProfileById(String userId);
-	    List<AccountRepresentation> listUserProfiles(int page, int size);
+	    List<AccountRepresentation> listUserProfiles();
 
 	    // Eligibility Checks
 	    EligibilityStatusRepresentation evaluateEligibility(String userId, String productId);
-	    EligibilityStatusRepresentation getEligibilityStatus(String userId, String productId);
+	   
 	    String updateUserEligibility(String userId, EligibilityStatusRepresentation eligibilityUpdate);
 
 	    // Combined Business Logic
