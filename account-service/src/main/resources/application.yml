@@ -14,7 +14,9 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
-
+springdoc:
+ api-docs:
+  path: /api-document
 management:
   health:
     readiness-state:
