@@ -16,6 +16,8 @@ import com.Mercurious.eligibilityservice.repository.AccountsRepository;
 import com.Mercurious.eligibilityservice.repository.ProductRepository;
 import com.Mercurious.eligibilityservice.service.IEligibilityService;
 
+import feign.FeignException.InternalServerError;
+
 @Service
 public class EligibilityServiceImpl implements IEligibilityService {
 	@Autowired
@@ -80,7 +82,7 @@ public class EligibilityServiceImpl implements IEligibilityService {
 			return products.stream().filter(product -> product.getMinAge() <= user.getAge())
 					.filter(product -> !product.isMembershipRequired() || user.isMembershipLevel())
 					.filter(ProductRepresentation::isAvailable).collect(Collectors.toList());
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			throw new RuntimeException(
 					"Error occured while accessing Eligibility for user with id:" + accountId + e.getMessage());
 		}
