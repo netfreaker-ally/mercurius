@@ -1,14 +1,19 @@
 package com.Mercurious.eligibilityservice.entity;
 
 import java.util.Date;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -46,19 +51,29 @@ public class AccountRepresentation {
     @NotBlank(message = "Employment Status is required")
     private String employmentStatus;
 
-    @NotBlank(message = "Membership Level is required")
+
     private boolean membershipLevel;
-    @OneToMany(mappedBy = "account")
-    private List<OfferRepresentation> offers;
+   
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(
+        name = "account_offer",
+        joinColumns = @JoinColumn(name = "account_id"),  
+        inverseJoinColumns = @JoinColumn(name = "offer_id")  
+    )
+    private Set<OfferRepresentation> offers = new HashSet<>();
     
 
-	public List<OfferRepresentation> getOffers() {
+	
+	
+
+	public Set<OfferRepresentation> getOffers() {
 		return offers;
 	}
 
-	public void setOffers(List<OfferRepresentation> offers) {
+	public void setOffers(Set<OfferRepresentation> offers) {
 		this.offers = offers;
 	}
+
 
 	public AccountRepresentation(Long id, @NotBlank(message = "Account ID is required") String accountId,
 			@NotBlank(message = "Account type is required") String accountType,
@@ -66,8 +81,8 @@ public class AccountRepresentation {
 			boolean isActive, @NotNull(message = "Age is required") Integer age,
 			@NotBlank(message = "Location is required") String location,
 			@NotNull(message = "Income is required") Double income,
-			@NotBlank(message = "Employment Status is required") String employmentStatus,
-			@NotBlank(message = "Membership Level is required") boolean membershipLevel) {
+			@NotBlank(message = "Employment Status is required") String employmentStatus, boolean membershipLevel,
+			Set<OfferRepresentation> offers) {
 		super();
 		this.id = id;
 		this.accountId = accountId;
@@ -81,6 +96,7 @@ public class AccountRepresentation {
 		this.income = income;
 		this.employmentStatus = employmentStatus;
 		this.membershipLevel = membershipLevel;
+		this.offers = offers;
 	}
 
 	public AccountRepresentation() {

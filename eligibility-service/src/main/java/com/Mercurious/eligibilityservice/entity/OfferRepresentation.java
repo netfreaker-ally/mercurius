@@ -1,12 +1,16 @@
 package com.Mercurious.eligibilityservice.entity;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.ManyToMany;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -16,38 +20,40 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@Entity(name="offer")
+@Entity(name = "offer")
 public class OfferRepresentation {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    @NotBlank(message = "Offer ID is required")
-    private String offerId;
+	@NotBlank(message = "Offer ID is required")
+	private String offerId;
 
-    @NotBlank(message = "Offer name is required")
-    private String name;
+	@NotBlank(message = "Offer name is required")
+	private String name;
 
-    private String description;
+	private String description;
 
-    @NotNull(message = "Discount percentage is required")
-    private double discountPercentage;
+	@NotNull(message = "Discount percentage is required")
+	private double discountPercentage;
 
-    @NotNull(message = "Start date is required")
-    private LocalDateTime startDate;
+	@NotNull(message = "Start date is required")
+	private LocalDateTime startDate;
 
-    @NotNull(message = "End date is required")
-    private LocalDateTime endDate;
+	@NotNull(message = "End date is required")
+	private LocalDateTime endDate;
+	@JsonBackReference
+	@ManyToMany(mappedBy = "offers")  
+    private Set<AccountRepresentation> accounts = new HashSet<>();;
 
-    @ManyToOne
-    private AccountRepresentation account;
+	
 
 	public OfferRepresentation(Long id, @NotBlank(message = "Offer ID is required") String offerId,
 			@NotBlank(message = "Offer name is required") String name, String description,
 			@NotNull(message = "Discount percentage is required") double discountPercentage,
 			@NotNull(message = "Start date is required") LocalDateTime startDate,
-			@NotNull(message = "End date is required") LocalDateTime endDate, AccountRepresentation account) {
+			@NotNull(message = "End date is required") LocalDateTime endDate, Set<AccountRepresentation> accounts) {
 		super();
 		this.id = id;
 		this.offerId = offerId;
@@ -56,7 +62,7 @@ public class OfferRepresentation {
 		this.discountPercentage = discountPercentage;
 		this.startDate = startDate;
 		this.endDate = endDate;
-		this.account = account;
+		this.accounts = accounts;
 	}
 
 	public Long getId() {
@@ -115,17 +121,19 @@ public class OfferRepresentation {
 		this.endDate = endDate;
 	}
 
-	public AccountRepresentation getAccount() {
-		return account;
+
+
+	public Set<AccountRepresentation> getAccounts() {
+		return accounts;
 	}
 
-	public void setAccount(AccountRepresentation account) {
-		this.account = account;
+	public void setAccounts(Set<AccountRepresentation> accounts) {
+		this.accounts = accounts;
 	}
 
 	public OfferRepresentation() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
-    
+
 }
