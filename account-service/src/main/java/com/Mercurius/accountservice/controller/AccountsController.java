@@ -22,7 +22,7 @@ import com.Mercurius.accountservice.service.IAccountManagementService;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/accounts")
+@RequestMapping("/mercurius/accounts")
 public class AccountsController {
 	@Autowired
 	private IAccountManagementService accountManagementService;
