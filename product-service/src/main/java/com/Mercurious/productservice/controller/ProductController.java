@@ -22,7 +22,7 @@ import com.Mercurious.productservice.service.IProductManagementService;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/products")
+@RequestMapping("/mercurius/products")
 public class ProductController {
 	@Autowired
 	private IProductManagementService iProductManagementService;
