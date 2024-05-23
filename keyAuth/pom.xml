@@ -68,7 +68,7 @@
 				<version>3.4.1</version>
 				<configuration>
 					<to>
-						<image>netfreakerr/${project.artifactId}:k1</image>
+						<image>netfreakerr/${project.artifactId}:v1</image>
 					</to>
 				</configuration>
 			</plugin>
