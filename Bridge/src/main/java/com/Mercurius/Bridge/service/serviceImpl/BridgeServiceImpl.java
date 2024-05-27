@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 
 import com.Mercurius.Bridge.constants.BridgeConstants;
 import com.Mercurius.Bridge.entity.AccountRepresentation;
@@ -21,6 +22,7 @@ import com.Mercurius.Bridge.service.clients.ProductOfferingsClient;
 
 import feign.FeignException;
 
+@Service
 public class BridgeServiceImpl implements IBridgeService {
 	@Autowired
 	AccountManagementClient accountManagementClient;
@@ -124,55 +126,55 @@ public class BridgeServiceImpl implements IBridgeService {
 		}
 	}
 
-	 @Override
-	    public String createBundledProduct(BundledProductRepresentation bundledProduct) {
-	        ResponseEntity<String> response = bundledProductsClient.createBundledProduct(bundledProduct);
-	        if (response.getStatusCode().equals(HttpStatus.OK)) {
-	            return response.getBody();
-	        } else {
-	            throw new RuntimeException("Failed to create bundled product");
-	        }
-	    }
+	@Override
+	public String createBundledProduct(BundledProductRepresentation bundledProduct) {
+		ResponseEntity<String> response = bundledProductsClient.createBundledProduct(bundledProduct);
+		if (response.getStatusCode().equals(HttpStatus.OK)) {
+			return response.getBody();
+		} else {
+			throw new RuntimeException("Failed to create bundled product");
+		}
+	}
 
-	    @Override
-	    public String updateBundledProduct(String productId, BundledProductRepresentation bundledProduct) {
-	        ResponseEntity<String> response = bundledProductsClient.updateBundledProduct(productId, bundledProduct);
-	        if (response.getStatusCode().equals(HttpStatus.OK)) {
-	            return response.getBody();
-	        } else {
-	            throw new RuntimeException("Failed to update bundled product");
-	        }
-	    }
+	@Override
+	public String updateBundledProduct(String productId, BundledProductRepresentation bundledProduct) {
+		ResponseEntity<String> response = bundledProductsClient.updateBundledProduct(productId, bundledProduct);
+		if (response.getStatusCode().equals(HttpStatus.OK)) {
+			return response.getBody();
+		} else {
+			throw new RuntimeException("Failed to update bundled product");
+		}
+	}
 
-	    @Override
-	    public String deleteBundledProduct(String productId) {
-	        ResponseEntity<Void> response = bundledProductsClient.deleteBundledProduct(productId);
-	        if (response.getStatusCode().equals(HttpStatus.OK)) {
-	            return BridgeConstants.MESSAGE_417_DELETE;
-	        } else {
-	            throw new RuntimeException("Failed to Delete bundled product");
-	        }
-	    }
+	@Override
+	public String deleteBundledProduct(String productId) {
+		ResponseEntity<Void> response = bundledProductsClient.deleteBundledProduct(productId);
+		if (response.getStatusCode().equals(HttpStatus.OK)) {
+			return BridgeConstants.MESSAGE_417_DELETE;
+		} else {
+			throw new RuntimeException("Failed to Delete bundled product");
+		}
+	}
 
-	    @Override
-	    public BundledProductRepresentation getBundledProductById(String productId) {
-	        ResponseEntity<BundledProductRepresentation> response = bundledProductsClient.getBundledProductById(productId);
-	        if (response.getStatusCode().equals(HttpStatus.OK)) {
-	            return response.getBody();
-	        } else {
-	            throw new RuntimeException("Failed to retrieve bundled product by ID");
-	        }
-	    }
+	@Override
+	public BundledProductRepresentation getBundledProductById(String productId) {
+		ResponseEntity<BundledProductRepresentation> response = bundledProductsClient.getBundledProductById(productId);
+		if (response.getStatusCode().equals(HttpStatus.OK)) {
+			return response.getBody();
+		} else {
+			throw new RuntimeException("Failed to retrieve bundled product by ID");
+		}
+	}
 
-	    @Override
-	    public List<BundledProductRepresentation> listBundledProducts() {
-	        ResponseEntity<List<BundledProductRepresentation>> response = bundledProductsClient.listBundledProducts();
-	        if (response.getStatusCode().equals(HttpStatus.OK)) {
-	            return response.getBody();
-	        } else {
-	            throw new RuntimeException("Failed to list bundled products");
-	        }
-	    }
+	@Override
+	public List<BundledProductRepresentation> listBundledProducts() {
+		ResponseEntity<List<BundledProductRepresentation>> response = bundledProductsClient.listBundledProducts();
+		if (response.getStatusCode().equals(HttpStatus.OK)) {
+			return response.getBody();
+		} else {
+			throw new RuntimeException("Failed to list bundled products");
+		}
+	}
 
 	@Override
 	public String createUserProfile(AccountRepresentation userProfile) throws Exception {

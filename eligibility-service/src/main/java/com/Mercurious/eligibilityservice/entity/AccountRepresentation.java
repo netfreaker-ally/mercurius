@@ -1,10 +1,9 @@
 package com.Mercurious.eligibilityservice.entity;
 
-import java.util.Date;
+
+import java.sql.Date;
 import java.util.HashSet;
 import java.util.Set;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -14,13 +13,14 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 @AllArgsConstructor
 @Data
-@Entity(name="account")
+@Entity(name = "account")
 public class AccountRepresentation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,8 +34,10 @@ public class AccountRepresentation {
     @NotNull(message = "Balance is required")
     private Double balance;
 
+   
     private Date createdDate;
 
+   
     private Date updatedDate;
 
     private boolean isActive;
@@ -61,18 +63,6 @@ public class AccountRepresentation {
         inverseJoinColumns = @JoinColumn(name = "offer_id")  
     )
     private Set<OfferRepresentation> offers = new HashSet<>();
-    
-
-	
-	
-
-	public Set<OfferRepresentation> getOffers() {
-		return offers;
-	}
-
-	public void setOffers(Set<OfferRepresentation> offers) {
-		this.offers = offers;
-	}
 
 
 	public AccountRepresentation(Long id, @NotBlank(message = "Account ID is required") String accountId,
@@ -199,6 +189,18 @@ public class AccountRepresentation {
 	public void setMembershipLevel(boolean membershipLevel) {
 		this.membershipLevel = membershipLevel;
 	}
+
+	public Set<OfferRepresentation> getOffers() {
+		return offers;
+	}
+
+	public void setOffers(Set<OfferRepresentation> offers) {
+		this.offers = offers;
+	}
     
+
+	
+	
+
 
 }

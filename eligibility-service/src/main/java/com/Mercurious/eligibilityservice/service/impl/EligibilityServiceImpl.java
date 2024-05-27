@@ -7,8 +7,10 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.Mercurious.eligibilityservice.dto.ResponseDto;
 import com.Mercurious.eligibilityservice.entity.AccountRepresentation;
 import com.Mercurious.eligibilityservice.entity.EligibilityStatusRepresentation;
 import com.Mercurious.eligibilityservice.entity.OfferRepresentation;
@@ -19,6 +21,8 @@ import com.Mercurious.eligibilityservice.repository.AccountsRepository;
 import com.Mercurious.eligibilityservice.repository.OfferRepository;
 import com.Mercurious.eligibilityservice.repository.ProductRepository;
 import com.Mercurious.eligibilityservice.service.IEligibilityService;
+import com.Mercurious.eligibilityservice.service.client.AccountsClient;
+import com.Mercurious.eligibilityservice.service.client.ProductsClient;
 
 import jakarta.transaction.Transactional;
 
@@ -30,35 +34,50 @@ public class EligibilityServiceImpl implements IEligibilityService {
 	@Autowired
 	private ProductRepository productRepository;
 	@Autowired
+	private AccountsClient accountsClient;
+	@Autowired
+	private ProductsClient productsClient;
+	@Autowired
 	private OfferRepository offerRepository;
 
-	public EligibilityServiceImpl(AccountsRepository accountsRepository, ProductRepository productRepository) {
+	
+	public EligibilityServiceImpl(AccountsRepository accountsRepository, ProductRepository productRepository,
+			AccountsClient accountsClient, ProductsClient productsClient, OfferRepository offerRepository,
+			Date utilDate) {
 		super();
 		this.accountsRepository = accountsRepository;
 		this.productRepository = productRepository;
+		this.accountsClient = accountsClient;
+		this.productsClient = productsClient;
+		this.offerRepository = offerRepository;
+		this.utilDate = utilDate;
 	}
-
+	Date utilDate=new Date();
 	@Transactional
 	@Override
-	public ProductRepresentation createProduct(ProductRepresentation product) {
-		Optional<ProductRepresentation> optionalProduct = productRepository.findByProductId(product.getProductId());
-		if (optionalProduct.isPresent()) {
-			throw new OffereAlreadyExistsException(
-					"Product already registered with given product " + product.getProductId());
-		}
-
-		return productRepository.save(product);
+	public ResponseEntity<ResponseDto>  createProduct(ProductRepresentation product) {
+//		Optional<ProductRepresentation> optionalProduct = productRepository.findByProductId(product.getProductId());
+//		if (optionalProduct.isPresent()) {
+//			throw new OffereAlreadyExistsException(
+//					"Product already registered with given product " + product.getProductId());
+//		}
+//
+//		return productRepository.save(product);
+		ResponseEntity<ResponseDto>  response=productsClient.createProduct(product);
+		return response;
 	}
 
 	@Override
-	public AccountRepresentation createAccount(AccountRepresentation account) {
-		Optional<AccountRepresentation> optionalAccount = accountsRepository.findByAccountId(account.getAccountId());
-		if (optionalAccount.isPresent()) {
-			throw new OffereAlreadyExistsException(
-					"Customer already registered with given accountId " + account.getAccountId());
-		}
-		account.setCreatedDate(new Date());
-		return accountsRepository.save(account);
+	public ResponseEntity<ResponseDto> createAccount(AccountRepresentation account) {
+//		Optional<AccountRepresentation> optionalAccount = accountsRepository.findByAccountId(account.getAccountId());
+//		if (optionalAccount.isPresent()) {
+//			throw new OffereAlreadyExistsException(
+//					"Customer already registered with given accountId " + account.getAccountId());
+//		}
+//		account.setCreatedDate(new java.sql.Date(utilDate.getTime()));;
+//		return accountsRepository.save(account);
+		ResponseEntity<ResponseDto>  response=accountsClient.createAccount(account);
+		return response;
 	}
 
 	@Override

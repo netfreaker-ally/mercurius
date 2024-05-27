@@ -23,7 +23,7 @@ public class AccountManagementServiceImpl implements IAccountManagementService {
 		super();
 		this.accountRepository = accountRepository;
 	}
-
+	Date utilDate=new Date();
 	@Override
 	public AccountRepresentation createAccount(AccountRepresentation account) {
 		Optional<AccountRepresentation> optionalAccount = accountRepository.findByAccountId(account.getAccountId());
@@ -31,7 +31,8 @@ public class AccountManagementServiceImpl implements IAccountManagementService {
 			throw new CustomerAlreadyExistsException(
 					"Customer already registered with given accountId " + account.getAccountId());
 		}
-		account.setCreatedDate(new Date());
+		
+		account.setCreatedDate(new java.sql.Date(utilDate.getTime()));
 		return accountRepository.save(account);
 	}
 
@@ -49,12 +50,12 @@ public class AccountManagementServiceImpl implements IAccountManagementService {
 			AccountRepresentation account = accountRepository.findByAccountId(accountDetails.getAccountId()).orElseThrow(
 					() -> new ResourceNotFoundException("Account not found with id ", accountDetails.getAccountId(), ""));
 
-			account.setUserId(accountDetails.getUserId());
+			account.setAccountId(accountDetails.getAccountId());
 			account.setAccountType(accountDetails.getAccountType());
 			account.setBalance(accountDetails.getBalance());
-			account.setUpdatedDate(new Date());
+			account.setUpdatedDate(new java.sql.Date(utilDate.getTime()));
 			account.setActive(accountDetails.isActive());
-			account.setProducts(accountDetails.getProducts());
+			account.setOffers(accountDetails.getOffers());
 
 			 accountRepository.save(account);
 			 isUpdated=true;

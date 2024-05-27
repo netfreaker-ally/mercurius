@@ -1,4 +1,4 @@
-package com.Mercurious.eligibilityservice.entity;
+package com.Mercurius.accountservice.entity;
 
 
 import java.util.HashSet;

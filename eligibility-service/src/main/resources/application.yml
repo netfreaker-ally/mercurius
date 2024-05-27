@@ -5,15 +5,18 @@ spring:
  application:
   name: eligibility-service
  datasource:
-    url: jdbc:h2:mem:testdb
-    driverClassName: org.h2.Driver
-    username: sa
-    password: ''
- h2:
-    console:
-      enabled: true
+    url: jdbc:mysql://sql12.freemysqlhosting.net:3306/sql12709564
+    driverClassName: com.mysql.cj.jdbc.Driver
+    username: sql12709564
+    password: cRBBXNYx2a
+    hikari:
+      # Consider these connection pool settings for better performance
+      poolName: HikariPool
+      minimumIdle: 5
+      maximumPoolSize: 10
+      autoCommit: true
  jpa:
-    database-platform: org.hibernate.dialect.H2Dialect
+    database-platform: org.hibernate.dialect.MySQL8Dialect
     hibernate:
       ddl-auto: update
     show-sql: true

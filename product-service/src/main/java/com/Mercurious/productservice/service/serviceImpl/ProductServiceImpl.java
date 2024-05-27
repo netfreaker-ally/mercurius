@@ -52,7 +52,7 @@ public class ProductServiceImpl implements IProductManagementService {
 		boolean isUpdated = false;
 		try {
 			ProductRepresentation productDetails = productRepository.findByProductId(product.getProductId())
-					.orElseThrow(() -> new ResourceNotFoundException("Account not found with id ",
+					.orElseThrow(() -> new ResourceNotFoundException("Product not found with id ",
 							product.getProductId(), ""));
 
 		
@@ -65,7 +65,7 @@ public class ProductServiceImpl implements IProductManagementService {
 			isUpdated = true;
 			return isUpdated;
 		} catch (Exception e) {
-			throw new RuntimeException("Error Occurred while Updating");
+			throw new RuntimeException("Error Occurred while Updating"+e.getMessage());
 		}
 	}
 

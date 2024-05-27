@@ -1,13 +1,11 @@
 spring:
  application:
   name: ApiGateway
- cloud:
-    config:
-     enabled: false  
+ cloud:    
     gateway:
       discovery:
         locator:
-          enabled: false
+          enabled: true
           lowerCaseServiceId: true
 server:
  port: 9000

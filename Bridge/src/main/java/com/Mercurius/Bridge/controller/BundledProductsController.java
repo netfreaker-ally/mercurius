@@ -10,12 +10,11 @@ import com.Mercurius.Bridge.entity.BundledProductRepresentation;
 import com.Mercurius.Bridge.service.IBridgeService;
 
 @RestController
-@RequestMapping("/bridge/api/bundled-products")
+@RequestMapping("/api/bundled-products")
 public class BundledProductsController {
 
-    @Autowired
-    private IBridgeService bridgeService;
-    
+	@Autowired
+	private IBridgeService bridgeService;
 
 	public BundledProductsController(IBridgeService bridgeService) {
 		super();
@@ -23,27 +22,28 @@ public class BundledProductsController {
 	}
 
 	@PostMapping
-    public ResponseEntity<String> createBundledProduct(@RequestBody BundledProductRepresentation bundledProduct) {
-        return ResponseEntity.ok(bridgeService.createBundledProduct(bundledProduct));
-    }
+	public ResponseEntity<String> createBundledProduct(@RequestBody BundledProductRepresentation bundledProduct) {
+		return ResponseEntity.ok(bridgeService.createBundledProduct(bundledProduct));
+	}
 
-    @PutMapping("/{productId}")
-    public ResponseEntity<String> updateBundledProduct(@PathVariable String productId, @RequestBody BundledProductRepresentation bundledProduct) {
-        return ResponseEntity.ok(bridgeService.updateBundledProduct(productId, bundledProduct));
-    }
+	@PutMapping("/{productId}")
+	public ResponseEntity<String> updateBundledProduct(@PathVariable String productId,
+			@RequestBody BundledProductRepresentation bundledProduct) {
+		return ResponseEntity.ok(bridgeService.updateBundledProduct(productId, bundledProduct));
+	}
 
-    @DeleteMapping("/{productId}")
-    public ResponseEntity<String> deleteBundledProduct(@PathVariable String productId) {
-        return ResponseEntity.ok(bridgeService.deleteBundledProduct(productId));
-    }
+	@DeleteMapping("/{productId}")
+	public ResponseEntity<String> deleteBundledProduct(@PathVariable String productId) {
+		return ResponseEntity.ok(bridgeService.deleteBundledProduct(productId));
+	}
 
-    @GetMapping("/{productId}")
-    public ResponseEntity<BundledProductRepresentation> getBundledProductById(@PathVariable String productId) {
-        return ResponseEntity.ok(bridgeService.getBundledProductById(productId));
-    }
+	@GetMapping("/{productId}")
+	public ResponseEntity<BundledProductRepresentation> getBundledProductById(@PathVariable String productId) {
+		return ResponseEntity.ok(bridgeService.getBundledProductById(productId));
+	}
 
-    @GetMapping
-    public ResponseEntity<List<BundledProductRepresentation>> listBundledProducts() {
-        return ResponseEntity.ok(bridgeService.listBundledProducts());
-    }
+	@GetMapping
+	public ResponseEntity<List<BundledProductRepresentation>> listBundledProducts() {
+		return ResponseEntity.ok(bridgeService.listBundledProducts());
+	}
 }

@@ -22,7 +22,7 @@ import com.Mercurious.productservice.service.IProductManagementService;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/mercurius/products")
+@RequestMapping("/api/products")
 public class ProductController {
 	@Autowired
 	private IProductManagementService iProductManagementService;
@@ -52,7 +52,7 @@ public class ProductController {
 	
 	}
 
-	@PutMapping("/{id}")
+	@PutMapping
 	public ResponseEntity<ResponseDto> updateProduct(
 			@Valid@RequestBody ProductRepresentation product) {
 		boolean isUpdated= iProductManagementService.updateProduct(product);
