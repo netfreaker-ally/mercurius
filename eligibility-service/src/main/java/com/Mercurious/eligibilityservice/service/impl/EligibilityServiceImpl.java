@@ -40,22 +40,22 @@ public class EligibilityServiceImpl implements IEligibilityService {
 	@Autowired
 	private OfferRepository offerRepository;
 
-	
 	public EligibilityServiceImpl(AccountsRepository accountsRepository, ProductRepository productRepository,
-			AccountsClient accountsClient, ProductsClient productsClient, OfferRepository offerRepository,
-			Date utilDate) {
+			AccountsClient accountsClient, ProductsClient productsClient, OfferRepository offerRepository) {
 		super();
 		this.accountsRepository = accountsRepository;
 		this.productRepository = productRepository;
 		this.accountsClient = accountsClient;
 		this.productsClient = productsClient;
 		this.offerRepository = offerRepository;
-		this.utilDate = utilDate;
+		;
 	}
-	Date utilDate=new Date();
+
+	Date utilDate = new Date();
+
 	@Transactional
 	@Override
-	public ResponseEntity<ResponseDto>  createProduct(ProductRepresentation product) {
+	public ResponseEntity<ResponseDto> createProduct(ProductRepresentation product) {
 //		Optional<ProductRepresentation> optionalProduct = productRepository.findByProductId(product.getProductId());
 //		if (optionalProduct.isPresent()) {
 //			throw new OffereAlreadyExistsException(
@@ -63,7 +63,7 @@ public class EligibilityServiceImpl implements IEligibilityService {
 //		}
 //
 //		return productRepository.save(product);
-		ResponseEntity<ResponseDto>  response=productsClient.createProduct(product);
+		ResponseEntity<ResponseDto> response = productsClient.createProduct(product);
 		return response;
 	}
 
@@ -76,7 +76,7 @@ public class EligibilityServiceImpl implements IEligibilityService {
 //		}
 //		account.setCreatedDate(new java.sql.Date(utilDate.getTime()));;
 //		return accountsRepository.save(account);
-		ResponseEntity<ResponseDto>  response=accountsClient.createAccount(account);
+		ResponseEntity<ResponseDto> response = accountsClient.createAccount(account);
 		return response;
 	}
 
@@ -105,8 +105,7 @@ public class EligibilityServiceImpl implements IEligibilityService {
 		switch (product.getProductType().toLowerCase()) {
 		case "premium":
 			if (!user.isActive()) {
-				return new EligibilityStatusRepresentation(false,
-						"User account is not active for premium products");
+				return new EligibilityStatusRepresentation(false, "User account is not active for premium products");
 			}
 			break;
 		case "financial":
@@ -137,36 +136,36 @@ public class EligibilityServiceImpl implements IEligibilityService {
 					"Error occured while accessing Eligibility for user with id:" + accountId + e.getMessage());
 		}
 	}
+
 	public boolean isOfferAttachedToAccount(String accountId, String offerId) {
-	    Optional<AccountRepresentation> optionalAccount = accountsRepository.findByAccountId(accountId);
-	    Optional<OfferRepresentation> optionalOffer = offerRepository.findByOfferId(offerId);
+		Optional<AccountRepresentation> optionalAccount = accountsRepository.findByAccountId(accountId);
+		Optional<OfferRepresentation> optionalOffer = offerRepository.findByOfferId(offerId);
 
-	    if (optionalAccount.isPresent() && optionalOffer.isPresent()) {
-	        AccountRepresentation account = optionalAccount.get();
-	        OfferRepresentation offer = optionalOffer.get();
-	        return account.getOffers().contains(offer);
-	    }
+		if (optionalAccount.isPresent() && optionalOffer.isPresent()) {
+			AccountRepresentation account = optionalAccount.get();
+			OfferRepresentation offer = optionalOffer.get();
+			return account.getOffers().contains(offer);
+		}
 
-	    return false;
+		return false;
 	}
-
 
 	@Override
 	public boolean createOfferForUser(String accountId, OfferRepresentation newOffer) {
 		boolean isOfferCreated = false;
-		 if (!isOfferAttachedToAccount(accountId, newOffer.getOfferId())) {
-		        AccountRepresentation user = accountsRepository.findByAccountId(accountId)
-		                .orElseThrow(() -> new ResourceNotFoundException("User not found", accountId, ""));
-		        Set<OfferRepresentation> offers = user.getOffers();
-		        offers.add(newOffer);
-		        user.setOffers(offers);
-		        accountsRepository.save(user);
-		        isOfferCreated = true;
-		    } else {
-		        throw new OffereAlreadyExistsException("Provided Offer Already Exists for this account:" + accountId);
-		    }
+		if (!isOfferAttachedToAccount(accountId, newOffer.getOfferId())) {
+			AccountRepresentation user = accountsRepository.findByAccountId(accountId)
+					.orElseThrow(() -> new ResourceNotFoundException("User not found", accountId, ""));
+			Set<OfferRepresentation> offers = user.getOffers();
+			offers.add(newOffer);
+			user.setOffers(offers);
+			accountsRepository.save(user);
+			isOfferCreated = true;
+		} else {
+			throw new OffereAlreadyExistsException("Provided Offer Already Exists for this account:" + accountId);
+		}
 
-		    return isOfferCreated;
+		return isOfferCreated;
 
 	}
 

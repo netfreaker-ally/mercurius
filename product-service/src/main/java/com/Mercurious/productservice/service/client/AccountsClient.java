@@ -12,7 +12,7 @@ import jakarta.validation.Valid;
 
 @FeignClient(name = "ACCOUNT-SERVICE")
 public interface AccountsClient {
-	@PostMapping("/api/accounts/create")
+	@PostMapping("/api/create")
 	 ResponseEntity<ResponseDto> createAccount(@Valid@RequestBody AccountRepresentation account) ;
 	
 	

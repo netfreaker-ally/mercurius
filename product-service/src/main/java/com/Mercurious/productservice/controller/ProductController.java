@@ -22,7 +22,7 @@ import com.Mercurious.productservice.service.IProductManagementService;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/api/products")
+@RequestMapping("/api")
 public class ProductController {
 	@Autowired
 	private IProductManagementService iProductManagementService;
@@ -81,7 +81,7 @@ public class ProductController {
 	        }
 	}
 
-	@GetMapping("/all")
+	@GetMapping("/all-products")
 	public ResponseEntity<List<ProductRepresentation>> getAllProducts() {
 		return ResponseEntity.ok(iProductManagementService.getAllProducts());
 	}

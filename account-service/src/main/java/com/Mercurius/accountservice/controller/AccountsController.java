@@ -22,7 +22,7 @@ import com.Mercurius.accountservice.service.IAccountManagementService;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/api/accounts")
+@RequestMapping("/api")
 public class AccountsController {
 	@Autowired
 	private IAccountManagementService accountManagementService;
@@ -47,7 +47,7 @@ public class AccountsController {
 	
 	}
 
-	@PutMapping("/{id}")
+	@PutMapping
 	public ResponseEntity<ResponseDto> updateAccount(
 			@Valid@RequestBody AccountRepresentation account) {
 		boolean isUpdated= accountManagementService.updateAccount(account);
@@ -76,7 +76,7 @@ public class AccountsController {
 	        }
 	}
 
-	@GetMapping("/all")
+	@GetMapping("/all-users")
 	public ResponseEntity<List<AccountRepresentation>> getAllAccounts() {
 		return ResponseEntity.ok(accountManagementService.getAllAccounts());
 	}

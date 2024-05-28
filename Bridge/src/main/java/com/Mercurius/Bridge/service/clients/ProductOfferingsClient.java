@@ -11,25 +11,25 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import com.Mercurius.Bridge.entity.AccountRepresentation;
+import com.Mercurius.Bridge.dto.ResponseDto;
 import com.Mercurius.Bridge.entity.ProductRepresentation;
 
-@FeignClient(name = "product-service")
+import jakarta.validation.Valid;
+
+@FeignClient(name = "PRODUCT-SERVICE")
 public interface ProductOfferingsClient {
 
-    @GetMapping("/products")
-    ResponseEntity<List<ProductRepresentation>>  getAllProducts();
+	@GetMapping("/api/all-products")
+	public ResponseEntity<List<ProductRepresentation>> getAllProducts();
 
-    @GetMapping("/products/{id}")
-    ResponseEntity<ProductRepresentation>  getProductById(@PathVariable("id") String productId);
+	@GetMapping("/api/{id}")
+	public ResponseEntity<ProductRepresentation> getProductById(@PathVariable("id") String productId);
+	@PostMapping("/api/create")
+	public ResponseEntity<ResponseDto> createProduct(@Valid@RequestBody ProductRepresentation product); 
+	@PutMapping("/api/products")
+	public ResponseEntity<ResponseDto> updateProduct(
+			@Valid@RequestBody ProductRepresentation product);
 
-    @PostMapping("/products")
-    ResponseEntity<String> createProduct(@RequestBody ProductRepresentation product) ;
-
-    @PutMapping("/products/{id}")
-    ResponseEntity<ProductRepresentation> updateProduct(@PathVariable("id") String productId, @RequestBody ProductRepresentation product);
-
-    @DeleteMapping("/products/{id}")
-    ResponseEntity<String> deleteProduct(@PathVariable("id") String productId);
-  
+	@DeleteMapping("/api/{id}")
+	public ResponseEntity<ResponseDto> deleteProduct(@PathVariable("id") String productId);
 }

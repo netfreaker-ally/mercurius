@@ -24,7 +24,7 @@ import com.Mercurious.eligibilityservice.service.IEligibilityService;
 
 import jakarta.validation.Valid;
 
-@RequestMapping("/api/eligibility")
+@RequestMapping("/api")
 @RestController
 public class EligibilityServiceController {
 	@Autowired

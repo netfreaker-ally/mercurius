@@ -12,7 +12,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
 
 @SpringBootApplication
-@EnableDiscoveryClient
 public class ApiGatewayApplication {
 
 	public static void main(String[] args) {
@@ -20,7 +19,7 @@ public class ApiGatewayApplication {
 	}
 
 	@Bean
-	public RouteLocator eazyBankRouteConfig(RouteLocatorBuilder routeLocatorBuilder) {
+	 RouteLocator eazyBankRouteConfig(RouteLocatorBuilder routeLocatorBuilder) {
 		return routeLocatorBuilder.routes().route(p -> p.path("/mercurius/accounts/**")
 				.filters(f -> f.rewritePath("/mercurius/accounts/(?<segment>.*)", "/${segment}")
 						.addResponseHeader("X-Response-Time", LocalDateTime.now().toString())
@@ -34,12 +33,13 @@ public class ApiGatewayApplication {
 								.retry(retryConfig -> retryConfig.setRetries(3).setMethods(HttpMethod.GET)
 										.setBackoff(Duration.ofMillis(100), Duration.ofMillis(1000), 2, true)))
 						.uri("lb://PRODUCT-SERVICE"))
-				.route(p -> p.path("/mercurius/eligibility/**")
-						.filters(f -> f.rewritePath("/mercurius/eligibility/(?<segment>.*)", "/${segment}")
+				.route(p -> p.path("/mercurius/bridge/**")
+						.filters(f -> f.rewritePath("/mercurius/bridge/(?<segment>.*)", "/${segment}")
 								.addResponseHeader("X-Response-Time", LocalDateTime.now().toString())
 								.addResponseHeader("Responsible", "Hanuma Ramavath").circuitBreaker(config -> config
-										.setName("loansCircuitBreaker").setFallbackUri("forward:/Support")))
-						.uri("lb://ELIGIBILITY-SERVICE"))
+										.setName("bridgeCircuitBreaker").setFallbackUri("forward:/Support")))
+						.uri("lb://BRIDGE")
+				)			
 				.build();
 
 	}

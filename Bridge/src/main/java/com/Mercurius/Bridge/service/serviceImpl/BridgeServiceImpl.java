@@ -1,6 +1,7 @@
 package com.Mercurius.Bridge.service.serviceImpl;
 
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -8,19 +9,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.Mercurius.Bridge.constants.BridgeConstants;
+import com.Mercurius.Bridge.dto.ResponseDto;
 import com.Mercurius.Bridge.entity.AccountRepresentation;
 import com.Mercurius.Bridge.entity.BundledProductRepresentation;
 import com.Mercurius.Bridge.entity.EligibilityStatusRepresentation;
 import com.Mercurius.Bridge.entity.OfferRepresentation;
 import com.Mercurius.Bridge.entity.ProductRepresentation;
-import com.Mercurius.Bridge.exception.ResourceNotFoundException;
 import com.Mercurius.Bridge.service.IBridgeService;
 import com.Mercurius.Bridge.service.clients.AccountManagementClient;
 import com.Mercurius.Bridge.service.clients.BundledProductsClient;
 import com.Mercurius.Bridge.service.clients.EligibilityChecksClient;
 import com.Mercurius.Bridge.service.clients.ProductOfferingsClient;
-
-import feign.FeignException;
 
 @Service
 public class BridgeServiceImpl implements IBridgeService {
@@ -44,86 +43,39 @@ public class BridgeServiceImpl implements IBridgeService {
 	}
 
 	@Override
-	public String createBaseProduct(ProductRepresentation baseProduct) throws Exception {
-		try {
-			ResponseEntity<String> message = productOfferingsClient.createProduct(baseProduct);
-			if (message.getStatusCode().equals(BridgeConstants.STATUS_200)) {
-				return message.getBody();
-			} else {
+	public ResponseEntity<ResponseDto> createBaseProduct(ProductRepresentation baseProduct) {
 
-				throw new Exception(BridgeConstants.MESSAGE_500);
-			}
-		} catch (FeignException ex) {
-
-			throw new RuntimeException("Failed to create base product", ex);
-		}
+		ResponseEntity<ResponseDto> response = productOfferingsClient.createProduct(baseProduct);
+		return response;
 	}
 
 	@Override
-	public String updateBaseProduct(String productId, ProductRepresentation baseProduct) {
-		try {
-			ResponseEntity<ProductRepresentation> message = productOfferingsClient.updateProduct(productId,
-					baseProduct);
-			if (message.getStatusCode().equals(BridgeConstants.STATUS_200)) {
-				return BridgeConstants.MESSAGE_200;
-			} else {
-				throw new Exception(BridgeConstants.MESSAGE_500);
-			}
-		} catch (FeignException.NotFound ex) {
-			throw new ResourceNotFoundException("Product ", productId, " not found");
-		} catch (Exception ex) {
-			throw new RuntimeException("Failed to update base product", ex);
-		}
+	public ResponseEntity<ResponseDto> updateBaseProduct(String productId, ProductRepresentation baseProduct) {
+		ResponseEntity<ResponseDto> response = productOfferingsClient.updateProduct(baseProduct);
+		return response;
 	}
 
 	@Override
-	public String deleteBaseProduct(String productId) {
-		try {
-			ResponseEntity<String> message = productOfferingsClient.deleteProduct(productId);
-			if (message.getStatusCode().equals(BridgeConstants.STATUS_200)) {
-				return BridgeConstants.MESSAGE_200;
-			} else {
-				throw new Exception(BridgeConstants.MESSAGE_500);
-			}
-		} catch (FeignException.NotFound ex) {
-			throw new ResourceNotFoundException("Product ", productId, " not found");
-		} catch (Exception ex) {
-			throw new RuntimeException("Failed to Delete base product", ex);
-		}
+	public ResponseEntity<ResponseDto> deleteBaseProduct(String productId) {
+		ResponseEntity<ResponseDto> response = productOfferingsClient.deleteProduct(productId);
+		return response;
 
 	}
 
 	@Override
 	public ProductRepresentation getBaseProductById(String productId) {
-		try {
+
 			ResponseEntity<ProductRepresentation> message = productOfferingsClient.getProductById(productId);
-			if (message.getStatusCode().equals(BridgeConstants.STATUS_200)) {
-				return message.getBody();
-			} else {
-				throw new Exception(BridgeConstants.MESSAGE_500);
-			}
-		} catch (FeignException.NotFound ex) {
-			throw new ResourceNotFoundException("Product ", productId, " not found");
-		} catch (Exception ex) {
-			throw new RuntimeException("Failed to Delete base product", ex);
-		}
+			return message.getBody();
 
 	}
 
 	@Override
 	public List<ProductRepresentation> listBaseProducts() {
 
-		try {
+	
 			ResponseEntity<List<ProductRepresentation>> message = productOfferingsClient.getAllProducts();
-			if (message.getStatusCode().equals(HttpStatus.OK)) {
-				return message.getBody();
-			} else {
-				throw new Exception(BridgeConstants.MESSAGE_500);
-			}
-
-		} catch (Exception ex) {
-			throw new RuntimeException("Failed to Get Products:\n", ex);
-		}
+			return message.getBody();
 	}
 
 	@Override
@@ -177,159 +129,74 @@ public class BridgeServiceImpl implements IBridgeService {
 	}
 
 	@Override
-	public String createUserProfile(AccountRepresentation userProfile) throws Exception {
+	public ResponseEntity<ResponseDto> createUserProfile(AccountRepresentation userProfile) {
 		// TODO Auto-generated method stub
-		try {
-			ResponseEntity<AccountRepresentation> message = accountManagementClient.createAccount(userProfile);
-			if (message.getStatusCode().equals(BridgeConstants.STATUS_200)) {
-				return BridgeConstants.MESSAGE_200;
-			} else {
-
-				throw new Exception(BridgeConstants.MESSAGE_500);
-			}
-		} catch (FeignException ex) {
-
-			throw new RuntimeException("Failed to create Account", ex);
-		}
+		ResponseEntity<ResponseDto> response = accountManagementClient.createAccount(userProfile);
+		return response;
 	}
 
 	@Override
-	public String updateUserProfile(String userId, AccountRepresentation userProfile) {
+	public ResponseEntity<ResponseDto> updateUserProfile(AccountRepresentation userProfile) {
 		// TODO Auto-generated method stub
-		try {
-			ResponseEntity<AccountRepresentation> message = accountManagementClient.updateAccount(userId, userProfile);
-			if (message.getStatusCode().equals(BridgeConstants.STATUS_200)) {
-				return BridgeConstants.MESSAGE_200;
-			} else {
-				throw new Exception(BridgeConstants.MESSAGE_500);
-			}
-		} catch (FeignException.NotFound ex) {
-			throw new ResourceNotFoundException("User ", userId, " not found");
-		} catch (Exception ex) {
-			throw new RuntimeException("Failed to update Account", ex);
-		}
+		ResponseEntity<ResponseDto> response = accountManagementClient.updateAccount(userProfile);
+		return response;
 	}
 
 	@Override
-	public String deleteUserProfile(String userId) {
+	public ResponseEntity<ResponseDto> deleteUserProfile(String userId) {
 
-		try {
-			ResponseEntity<String> message = accountManagementClient.deleteAccount(userId);
-			if (message.getStatusCode().equals(BridgeConstants.STATUS_200)) {
-				return BridgeConstants.MESSAGE_200;
-			} else {
-				throw new Exception(BridgeConstants.MESSAGE_500);
-			}
-		} catch (FeignException.NotFound ex) {
-			throw new ResourceNotFoundException("User ", userId, " not found");
-		} catch (Exception ex) {
-			throw new RuntimeException("Failed to Delete Account", ex);
-		}
+		ResponseEntity<ResponseDto> response = accountManagementClient.deleteAccount(userId);
+		return response;
+
 	}
 
 	@Override
 	public AccountRepresentation getUserProfileById(String userId) {
 		// TODO Auto-generated method stub
-		try {
-			ResponseEntity<AccountRepresentation> message = accountManagementClient.getAccountById(userId);
-			if (message.getStatusCode().equals(BridgeConstants.STATUS_200)) {
-				return message.getBody();
-			} else {
-				throw new Exception(BridgeConstants.MESSAGE_500);
-			}
-		} catch (FeignException.NotFound ex) {
-			throw new ResourceNotFoundException("User ", userId, " not found");
-		} catch (Exception ex) {
-			throw new RuntimeException("Failed to Get User:\n", ex);
-		}
+		ResponseEntity<AccountRepresentation> response = accountManagementClient.getAccountById(userId);
+		return response.getBody();
+
 	}
 
 	@Override
 	public List<AccountRepresentation> listUserProfiles() {
-		try {
-			ResponseEntity<List<AccountRepresentation>> message = accountManagementClient.getAllAccounts();
-			if (message.getStatusCode().equals(HttpStatus.OK)) {
-				return message.getBody();
-			} else {
-				throw new Exception(BridgeConstants.MESSAGE_500);
-			}
 
-		} catch (Exception ex) {
-			throw new RuntimeException("Failed to Get Users:\n", ex);
-		}
+		ResponseEntity<List<AccountRepresentation>> message = accountManagementClient.getAllAccounts();
+		return message.getBody();
 
 	}
 
-	@SuppressWarnings("unlikely-arg-type")
+
 	@Override
 	public EligibilityStatusRepresentation evaluateEligibility(String userId, String productId) {
-		try {
+		
 			ResponseEntity<EligibilityStatusRepresentation> message = eligibilityChecksClient
 					.evaluateEligibility(userId, productId);
-			if (message.getStatusCode().equals(BridgeConstants.STATUS_200)) {
-				return message.getBody();
-			} else {
-				throw new Exception(BridgeConstants.MESSAGE_500);
-			}
-		} catch (FeignException.NotFound ex) {
-			throw new ResourceNotFoundException("User ", userId, " not found");
-		} catch (Exception ex) {
-			throw new RuntimeException("Failed to Get User or Product:\n", ex);
-		}
+			return message.getBody();
+	}
+
+	
+
+	@Override
+	public ResponseEntity<ResponseDto> createOfferForUser(String userId, OfferRepresentation offer) {
+		ResponseEntity<ResponseDto> response = eligibilityChecksClient.createOfferForUser(userId, offer);
+		return response;
 	}
 
 	@Override
-	public String updateUserEligibility(String userId, EligibilityStatusRepresentation eligibilityUpdate) {
-		try {
-			ResponseEntity<EligibilityStatusRepresentation> message = eligibilityChecksClient.updateEligibility(userId,
-					eligibilityUpdate);
-			if (message.getStatusCode().equals(BridgeConstants.STATUS_200)) {
-				return BridgeConstants.MESSAGE_200;
-			} else {
-				throw new Exception(BridgeConstants.MESSAGE_500);
-			}
-		} catch (FeignException.NotFound ex) {
-			throw new ResourceNotFoundException("User ", userId, " not found");
-		} catch (Exception ex) {
-			throw new RuntimeException("Failed to Get User ", ex);
-		}
+	public Set<OfferRepresentation> getUserOffers(String userId) {
+		ResponseEntity<Set<OfferRepresentation>> response = eligibilityChecksClient.getUserOffers(userId);
+		return response.getBody();
 	}
 
 	@Override
-	public String createOfferForUser(String userId, OfferRepresentation offer) {
-		ResponseEntity<String> response = eligibilityChecksClient.createOfferForUser(userId, offer);
-		if (response.getStatusCode().equals(HttpStatus.OK)) {
-			return response.getBody();
-		} else {
-			throw new RuntimeException("Failed to create offer for user");
-		}
+	public List<ProductRepresentation> getEligibleProductsForUser(String userId) {
+		ResponseEntity<List<ProductRepresentation>> response=eligibilityChecksClient.getEligibleProductsForUser(userId);
+		return response.getBody();
 	}
 
-	@Override
-	public List<OfferRepresentation> getUserOffers(String userId) {
-		ResponseEntity<List<OfferRepresentation>> response = eligibilityChecksClient.getUserOffers(userId);
-		if (response.getStatusCode().equals(HttpStatus.OK)) {
-			return response.getBody();
-		} else {
-			throw new RuntimeException("Failed to get offers for user");
-		}
-	}
+	
 
-	@Override
-	public EligibilityStatusRepresentation checkAndApplyEligibility(String userId, String productId) {
-		try {
-			ResponseEntity<EligibilityStatusRepresentation> response = eligibilityChecksClient
-					.checkAndApplyEligibility(userId, productId);
-			if (response.getStatusCode().equals(HttpStatus.OK)) {
-				return response.getBody();
-			} else {
-				throw new RuntimeException("Failed to check and apply eligibility");
-			}
-		} catch (FeignException.NotFound ex) {
-			throw new ResourceNotFoundException("User", userId, " not found");
-		} catch (Exception ex) {
-			throw new RuntimeException("Failed to get eligibility status", ex);
-		}
-	}
+	
 
 }

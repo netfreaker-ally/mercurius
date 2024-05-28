@@ -12,7 +12,7 @@ import jakarta.validation.Valid;
 
 @FeignClient(name = "PRODUCT-SERVICE")
 public interface ProductsClient {
-	@PostMapping("/api/products/create")
+	@PostMapping("/api/create")
 	public ResponseEntity<ResponseDto> createProduct(@Valid@RequestBody ProductRepresentation product) ;
 
 }

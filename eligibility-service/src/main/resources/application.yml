@@ -10,7 +10,6 @@ spring:
     username: sql12709564
     password: cRBBXNYx2a
     hikari:
-      # Consider these connection pool settings for better performance
       poolName: HikariPool
       minimumIdle: 5
       maximumPoolSize: 10
