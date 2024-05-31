@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.stereotype.Service;
 
 import com.Mercurious.productservice.entity.ProductRepresentation;
@@ -21,6 +22,8 @@ public class ProductServiceImpl implements IProductManagementService {
 	ProductRepository productRepository;
 	@Autowired
 	private AccountsRepository accountRepository;
+	@Autowired
+	StreamBridge streamBridge;
 
 	public ProductServiceImpl(ProductRepository productRepository, AccountsRepository accountRepository) {
 		super();
@@ -43,8 +46,13 @@ public class ProductServiceImpl implements IProductManagementService {
 			throw new ProductAlreadyExistsException(
 					"Product already registered with given product " + product.getProductId());
 		}
-		
+		sendCommunicationAsProductCreated(product);
 		return productRepository.save(product);
+	}
+	public void sendCommunicationAsProductCreated(ProductRepresentation product) {
+		System.out.println("---------Product Created with name-----------"+product.getProductName());
+		 boolean isSend=streamBridge.send("sendCommunicationAsProductCreated", product);	
+		
 	}
 
 	@Override
@@ -89,6 +97,12 @@ public class ProductServiceImpl implements IProductManagementService {
 	public List<ProductRepresentation> getAllProducts() {
 		List<ProductRepresentation> allProducts = productRepository.findAll();
 		return allProducts;
+	}
+
+	@Override
+	public ProductRepresentation updateCommunicationStatus(ProductRepresentation product) {
+		System.out.println("--------Subscribed in Product Service----------"+product.getProductName());	
+		return product;
 	}
 
 }

@@ -18,5 +18,6 @@ public interface IProductManagementService {
 	boolean deleteProduct(@PathVariable("id") String productId);
 
 	List<ProductRepresentation> getAllProducts();
+	ProductRepresentation updateCommunicationStatus(ProductRepresentation product);
 
 }
