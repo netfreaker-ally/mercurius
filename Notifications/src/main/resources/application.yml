@@ -5,6 +5,13 @@ server:
 spring:
   application:
     name: "Notifications"
+#  mail:
+#    host: smtp.gmail.com
+#    port: 587
+#    username: netfreakerr@gmail.com
+#    password: wemkwehlmqnjmzbt  
+  
+    
   cloud:
     function:
       definition: productcreated
