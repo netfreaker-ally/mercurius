@@ -1,18 +1,11 @@
-package com.Mercurius.accountservice.entity;
+package com.mercurius.order.entity;
 
 
 import java.sql.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
+
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -20,20 +13,17 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 @AllArgsConstructor
 @Data
-@Entity(name = "account")
+
 public class AccountRepresentation {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+  
     private Long id;
 
-    @NotBlank(message = "Account ID is required")
+  
     private String accountId;
-    @NotBlank(message = "Account Name is required")
-	private String accountName;
-    @NotBlank(message = "Account type is required")
+ 
     private String accountType;
 
-    @NotNull(message = "Balance is required")
+ 
     private Double balance;
 
    
@@ -44,33 +34,25 @@ public class AccountRepresentation {
 
     private boolean isActive;
 
-    @NotNull(message = "Age is required")
+
     private Integer age;
 
-    @NotBlank(message = "Location is required")
+  
     private String location;
 
-    @NotNull(message = "Income is required")
+  
     private Double income;
-    @NotBlank(message = "Employment Status is required")
+  
     private String employmentStatus;
 
 
     private boolean membershipLevel;
    
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(
-        name = "account_offer",
-        joinColumns = @JoinColumn(name = "account_id"),  
-        inverseJoinColumns = @JoinColumn(name = "offer_id")  
-    )
+   
     private Set<OfferRepresentation> offers = new HashSet<>();
-    
-    
-	
+
 
 	public AccountRepresentation(Long id, @NotBlank(message = "Account ID is required") String accountId,
-			@NotBlank(message = "Account Name is required") String accountName,
 			@NotBlank(message = "Account type is required") String accountType,
 			@NotNull(message = "Balance is required") Double balance, Date createdDate, Date updatedDate,
 			boolean isActive, @NotNull(message = "Age is required") Integer age,
@@ -81,7 +63,6 @@ public class AccountRepresentation {
 		super();
 		this.id = id;
 		this.accountId = accountId;
-		this.accountName = accountName;
 		this.accountType = accountType;
 		this.balance = balance;
 		this.createdDate = createdDate;
@@ -98,14 +79,6 @@ public class AccountRepresentation {
 	public AccountRepresentation() {
 		super();
 		// TODO Auto-generated constructor stub
-	}
-
-	public String getAccountName() {
-		return accountName;
-	}
-
-	public void setAccountName(String accountName) {
-		this.accountName = accountName;
 	}
 
 	public Long getId() {
