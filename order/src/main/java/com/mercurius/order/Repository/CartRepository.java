@@ -10,5 +10,5 @@ import com.mercurius.order.entity.OrderItem;
 
 @Repository
 public interface CartRepository extends JpaRepository<Cart, String> {
-	List<OrderItem> findAllByOrderItem();
+//	List<OrderItem> findAllByOrderItem();
 }

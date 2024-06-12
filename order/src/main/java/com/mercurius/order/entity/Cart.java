@@ -1,17 +1,19 @@
 package com.mercurius.order.entity;
 
-import java.util.ArrayList;
+
 import java.util.List;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 
 @Entity
 public class Cart {
 
 	@Id
 	private String accountId;
-	private List<OrderItem> orderItems = new ArrayList<>();
+	@OneToMany(mappedBy = "cart")
+    private List<OrderItem> orderItems;
 
 	public Cart() {
 	}

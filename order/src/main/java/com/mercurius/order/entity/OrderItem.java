@@ -1,20 +1,35 @@
 package com.mercurius.order.entity;
 
-import java.time.LocalDateTime;
+import java.sql.Date;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Embeddable;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 @Entity
+@Table(name = "order_item")
 public class OrderItem {
 	@Id
 	private String orderItemId;
-	private String orderId;
-	private LocalDateTime orderDate;
-	private LocalDateTime cancellationDate;
+	 @JsonIgnore 
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "order_id")
+	private Order order;
+	@ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "cart_account_id")
+    private Cart cart;
+
+	
+	private String accountId;
+	private Date orderDate;
+	private Date cancellationDate;
 	private PaymentType paymentType;
 	private Status status;
 	private String cancellationReason;
@@ -26,15 +41,22 @@ public class OrderItem {
 	private PriceComponent priceComponents;
 	private boolean isReplacement;
 	private String productId;
-	
 
-	public OrderItem(String orderItemId, String orderId, LocalDateTime orderDate, LocalDateTime cancellationDate,
-			PaymentType paymentType, Status status, String cancellationReason, String cancellationSubReason,
-			boolean courierReturn, int quantity, String listingId, List<String> packageIds,
-			PriceComponent priceComponents, boolean isReplacement, String productId) {
+	
+	public OrderItem() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	public OrderItem(String orderItemId, Order order, Cart cart, String accountId, Date orderDate,
+			Date cancellationDate, PaymentType paymentType, Status status, String cancellationReason,
+			String cancellationSubReason, boolean courierReturn, int quantity, String listingId,
+			List<String> packageIds, PriceComponent priceComponents, boolean isReplacement, String productId) {
 		super();
 		this.orderItemId = orderItemId;
-		this.orderId = orderId;
+		this.order = order;
+		this.cart = cart;
+		this.accountId = accountId;
 		this.orderDate = orderDate;
 		this.cancellationDate = cancellationDate;
 		this.paymentType = paymentType;
@@ -50,8 +72,32 @@ public class OrderItem {
 		this.productId = productId;
 	}
 
+	public Cart getCart() {
+		return cart;
+	}
+
+	public void setCart(Cart cart) {
+		this.cart = cart;
+	}
+
+	public Order getOrder() {
+		return order;
+	}
+
+	public void setOrder(Order order) {
+		this.order = order;
+	}
+
 	public String getProductId() {
 		return productId;
+	}
+
+	public String getAccountId() {
+		return accountId;
+	}
+
+	public void setAccountId(String accountId) {
+		this.accountId = accountId;
 	}
 
 	public void setProductId(String productId) {
@@ -66,27 +112,19 @@ public class OrderItem {
 		this.orderItemId = orderItemId;
 	}
 
-	public String getOrderId() {
-		return orderId;
-	}
-
-	public void setOrderId(String orderId) {
-		this.orderId = orderId;
-	}
-
-	public LocalDateTime getOrderDate() {
+	public Date getOrderDate() {
 		return orderDate;
 	}
 
-	public void setOrderDate(LocalDateTime orderDate) {
+	public void setOrderDate(Date orderDate) {
 		this.orderDate = orderDate;
 	}
 
-	public LocalDateTime getCancellationDate() {
+	public Date getCancellationDate() {
 		return cancellationDate;
 	}
 
-	public void setCancellationDate(LocalDateTime cancellationDate) {
+	public void setCancellationDate(Date cancellationDate) {
 		this.cancellationDate = cancellationDate;
 	}
 
@@ -179,6 +217,7 @@ public class OrderItem {
 		RETURN_REQUESTED, RETURNED, SHIPPED, DELIVERED, COMPLETED
 	}
 
+	@Embeddable
 	public static class PriceComponent {
 		private double sellingPrice;
 		private double totalPrice;
