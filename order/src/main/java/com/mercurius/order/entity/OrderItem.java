@@ -19,10 +19,10 @@ public class OrderItem {
 	@Id
 	private String orderItemId;
 	 @JsonIgnore 
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne
 	@JoinColumn(name = "order_id")
 	private Order order;
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne
     @JoinColumn(name = "cart_account_id")
     private Cart cart;
 
@@ -265,4 +265,16 @@ public class OrderItem {
 			this.mercuiusDiscount = mercuiusDiscount;
 		}
 	}
+
+	@Override
+	public String toString() {
+		return "OrderItem [orderItemId=" + orderItemId + ", order=" + order + ", cart=" + cart + ", accountId="
+				+ accountId + ", orderDate=" + orderDate + ", cancellationDate=" + cancellationDate + ", paymentType="
+				+ paymentType + ", status=" + status + ", cancellationReason=" + cancellationReason
+				+ ", cancellationSubReason=" + cancellationSubReason + ", courierReturn=" + courierReturn
+				+ ", quantity=" + quantity + ", listingId=" + listingId + ", packageIds=" + packageIds
+				+ ", priceComponents=" + priceComponents + ", isReplacement=" + isReplacement + ", productId="
+				+ productId + "]";
+	}
+	
 }

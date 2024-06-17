@@ -1,10 +1,12 @@
 package com.mercurius.order.entity;
 
-
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 
 @Entity
@@ -12,8 +14,9 @@ public class Cart {
 
 	@Id
 	private String accountId;
-	@OneToMany(mappedBy = "cart")
-    private List<OrderItem> orderItems;
+	@OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+	
+	private List<OrderItem> orderItems;
 
 	public Cart() {
 	}

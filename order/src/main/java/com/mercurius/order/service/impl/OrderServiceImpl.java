@@ -14,7 +14,6 @@ import com.mercurius.order.entity.Cart;
 import com.mercurius.order.entity.Order;
 import com.mercurius.order.entity.OrderItem;
 import com.mercurius.order.service.OrderService;
-import com.mercurius.order.service.ShoppingCartService;
 
 import jakarta.transaction.Transactional;
 
@@ -25,35 +24,90 @@ public class OrderServiceImpl implements OrderService {
 
 	@Autowired
 	private OrderItemRepository orderItemRepository;
-
-	@Autowired
-	private ShoppingCartService shoppingCartService;
+//
+//	@Autowired
+//	private ShoppingCartService shoppingCartService;
 
 	@Autowired
 	private CartRepository cartRepository;
 
 	public OrderServiceImpl(OrderRepository orderRepository, OrderItemRepository orderItemRepository,
-			ShoppingCartService shoppingCartService, CartRepository cartRepository) {
+			CartRepository cartRepository) {
 		super();
 		this.orderRepository = orderRepository;
 		this.orderItemRepository = orderItemRepository;
-		this.shoppingCartService = shoppingCartService;
+
 		this.cartRepository = cartRepository;
 	}
 
+//	@Override
+//	@Transactional
+//	public String createOrder(Order order) {
+//		List<OrderItem> orderitem = orderItemRepository.findByAccountId(order.getAccountId());
+//		if (orderitem == null || orderitem.isEmpty()) {
+//			return "Cart is empty";
+//		}
+//		
+//		order.setOrderId("ORD"+UUID.randomUUID().toString());
+//		order.setOrderItems(orderitem);
+//		orderRepository.save(order);
+//
+//		
+//		orderItemRepository.deleteAll();
+//
+//		return "Order created successfully";
+//	}
+//
+//
+//	@Override
+//	@Transactional
+//	public String createOrderItem(OrderItem orderItem) {
+//	   
+//	    orderItem.setOrderItemId(UUID.randomUUID().toString());
+//
+//	 
+//	    Cart cart = cartRepository.findById(orderItem.getCart().getAccountId()).orElse(new Cart());
+//	    
+//	  
+//	    if (cart.getAccountId() == null || cart.getAccountId().isEmpty()) {
+//	        cart.setAccountId(orderItem.getCart().getAccountId());
+//	        cart.setOrderItems(new ArrayList<>());
+//	    }
+//	    
+//	  
+//	    List<OrderItem> listOfOrderItems = cart.getOrderItems();
+//	    listOfOrderItems.add(orderItem);
+//	    cart.setOrderItems(listOfOrderItems);
+//
+//	 
+//	    orderItem.setCart(cart);
+//	    
+//	    
+//	    cartRepository.save(cart);
+////	    orderItem.setOrder(new Order() {{ setOrderId("ORD:" + UUID.randomUUID().toString()); }});
+//
+//	    orderItemRepository.save(orderItem);
+//
+//	    return "Order item created successfully";
+//	}
 	@Override
 	@Transactional
 	public String createOrder(Order order) {
-		Cart cart = cartRepository.findById("123").orElse(null);
-		if (cart == null || cart.getOrderItems() == null || cart.getOrderItems().isEmpty()) {
+		List<OrderItem> orderItems = orderItemRepository.findByAccountId(order.getAccountId());
+		if (orderItems == null || orderItems.isEmpty()) {
 			return "Cart is empty";
 		}
 
-		order.setOrderItems(cart.getOrderItems());
-		orderRepository.save(order);
+		// Set a unique order ID
+		order.setOrderId("ORD" + UUID.randomUUID().toString());
 
-		cart.setOrderItems(null);
-		cartRepository.save(cart);
+		order.setOrderItems(orderItems);
+
+		Order ord=orderRepository.save(order);
+		System.out.println("---------------------"+ord.toString());
+		/*
+		 * cartRepository.deleteAll();
+		 */
 
 		return "Order created successfully";
 	}
@@ -61,61 +115,38 @@ public class OrderServiceImpl implements OrderService {
 	@Override
 	@Transactional
 	public String createOrderItem(OrderItem orderItem) {
-	    orderItem.setOrderItemId(UUID.randomUUID().toString()); // Generate new ID
 
-	    // Find or create associated Order
-	    Order order = orderRepository.findById("123").orElse(new Order());
-	    order.setOrderId(UUID.randomUUID().toString()); // Manually assign Order ID
-	    order.setAccountId("123");
+		orderItem.setOrderItemId(UUID.randomUUID().toString());
 
-	    // Find or create associated Cart
-	    Cart cart = cartRepository.findById("123").orElse(new Cart());
-	    cart.setAccountId("123");
+		Cart cart = cartRepository.findById(orderItem.getCart().getAccountId()).orElse(new Cart());
 
-	    // Set Order and Cart to the OrderItem
-	    orderItem.setOrder(order);
-	    orderItem.setCart(cart);
+		if (cart.getAccountId() == null || cart.getAccountId().isEmpty()) {
+			cart.setAccountId(orderItem.getCart().getAccountId());
+			cart.setOrderItems(new ArrayList<>());
+		}
 
-	    // Save OrderItem
-	    orderItemRepository.save(orderItem);
+		cart.getOrderItems().add(orderItem);
 
-	    return "Order item created successfully";
+		orderItem.setCart(cart);
+
+		cartRepository.save(cart);
+
+		orderItemRepository.save(orderItem);
+		
+		return "Order item created successfully";
 	}
-
-
-
 
 	@Override
 	public List<Order> getAllOrders() {
 		return orderRepository.findAll();
 	}
 
-	@Override
-	public Order getOrderById(String orderId) {
-		return orderRepository.findById(orderId).orElse(null);
-	}
 
 	@Override
-	public List<OrderItem> getOrderItemsByOrderId(String orderId) {
-//		List<OrderItem> orderItem = orderItemRepository.findByOrderId(orderId);
-		List<OrderItem> orderItem = null;
-		if (orderItem.size() == 0) {
-			return null;
-		}
-
-		return orderItem;
-
-	}
-
-	@Override
-	public List<OrderItem> getAllOrderItems() {
-
-		return orderItemRepository.findAll();
-	}
-
-	@Override
-	public List<Cart> getAllCartItems() {
-		// TODO Auto-generated method stub
-		return cartRepository.findAll();
+	public List<OrderItem> getAllCartItems(String accountId) {
+		
+		List<OrderItem> oi=orderItemRepository.findByAccountId(accountId);
+		
+		return oi;
 	}
 }

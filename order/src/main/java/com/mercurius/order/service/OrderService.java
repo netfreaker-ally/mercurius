@@ -13,12 +13,9 @@ public interface OrderService {
 
 	List<Order> getAllOrders();
 
-	List<OrderItem> getAllOrderItems();
 
-	List<Cart> getAllCartItems();
+	List<OrderItem>  getAllCartItems(String accountId);
 
-	Order getOrderById(String orderId);
 
-	List<OrderItem> getOrderItemsByOrderId(String orderId);
 
 }

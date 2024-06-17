@@ -3,7 +3,9 @@ package com.mercurius.order.entity;
 import java.sql.Date;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -17,9 +19,10 @@ public class Order {
 	@Id
 	private String orderId;
 	private String accountId;
+	 @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
 	private Date orderDate;
 	@OneToMany(mappedBy = "order",cascade = CascadeType.ALL)
-	 @JsonIgnore 
+	@JsonIgnoreProperties("order")
 	private List<OrderItem> orderItems;
     
 

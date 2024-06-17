@@ -1,0 +1,29 @@
+{
+  "orderItemId": null,
+  "cart": {
+    "accountId": "haf2",
+    "orderItems": []
+  },
+  "accountId": "haf2",
+  "orderDate": "2024-06-17T08:03:20.885Z",
+  "cancellationDate": "2024-06-17T08:03:20.885Z",
+  "paymentType": "COD",
+  "status": "APPROVED",
+  "cancellationReason": "string",
+  "cancellationSubReason": "string",
+  "courierReturn": true,
+  "quantity": 0,
+  "listingId": "string",
+  "packageIds": [
+    "string"
+  ],
+  "priceComponents": {
+    "sellingPrice": 0,
+    "totalPrice": 0,
+    "shippingCharge": 0,
+    "customerPrice": 0,
+    "getmercuiusDiscount": 0
+  },
+  "productId": "prod342",
+  "replacement": true
+}
