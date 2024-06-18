@@ -1,23 +1,17 @@
-package com.mercurius.order.entity;
+package com.Mercurius.Notifications.entity;
 
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
 
-@Entity
+
 public class Cart {
 
-	@Id
+	
 	private String accountId;
-	@OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-	@JsonIgnore
+
 	private List<OrderItem> orderItems;
 
 	public Cart() {

@@ -27,6 +27,22 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
+ cloud:
+    function:
+      definition: orderconfirmed
+    stream:
+      bindings:
+        orderconfirmed-in-0:
+          destination: received-order-confirmation
+          group: ${spring.application.name}
+        sendOrderConfirmation-out-0:
+          destination: Order-Confirmed
+ rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    connection-timeout: 10s
 management:
   health:
     readiness-state:

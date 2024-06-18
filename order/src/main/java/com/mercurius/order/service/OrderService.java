@@ -12,10 +12,8 @@ public interface OrderService {
 	String createOrderItem(OrderItem orderItem);
 
 	List<Order> getAllOrders();
-
-
 	List<OrderItem>  getAllCartItems(String accountId);
 
-
+	Order UpdateCommunicationStatus(Order order);
 
 }

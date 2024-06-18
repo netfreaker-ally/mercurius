@@ -1,35 +1,25 @@
-package com.mercurius.order.entity;
+package com.Mercurius.Notifications.entity;
 
 import java.sql.Date;
 import java.util.List;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
+
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import jakarta.persistence.Embeddable;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
 
-@Entity
-@Table(name = "order_item")
+
+
 public class OrderItem {
-	@Id
+
 	private String orderItemId;
 
-	@ManyToOne
-	@JoinColumn(name = "order_id")
 //	@JsonBackReference
 	@JsonIgnore
 	private Order order;
-	@ManyToOne
-	@JoinColumn(name = "cart_account_id")
+	
 	
 	private Cart cart;
 
@@ -222,7 +212,7 @@ public class OrderItem {
 		RETURN_REQUESTED, RETURNED, SHIPPED, DELIVERED, COMPLETED
 	}
 
-	@Embeddable
+
 	public static class PriceComponent {
 		private double sellingPrice;
 		private double totalPrice;
@@ -271,10 +261,6 @@ public class OrderItem {
 		}
 	}
 
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("orderItemId", orderItemId)
-				.append("accountId", accountId).append("orderId", order != null ? order.getOrderId() : null).toString();
-	}
+	
 
 }

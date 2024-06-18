@@ -7,12 +7,16 @@ import org.springframework.stereotype.Repository;
 
 import com.mercurius.order.entity.OrderItem;
 
-
+import jakarta.transaction.Transactional;
 
 @Repository
-public interface OrderItemRepository extends JpaRepository<OrderItem, String>{
-	
+@Transactional
+public interface OrderItemRepository extends JpaRepository<OrderItem, String> {
+
 	List<OrderItem> findByAccountId(String accountId);
-	 void deleteAll();
-	 
+
+	void deleteByAccountId(String accountId);
+
+	void deleteAll();
+
 }
