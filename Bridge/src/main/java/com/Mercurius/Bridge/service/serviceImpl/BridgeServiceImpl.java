@@ -14,11 +14,14 @@ import com.Mercurius.Bridge.entity.AccountRepresentation;
 import com.Mercurius.Bridge.entity.BundledProductRepresentation;
 import com.Mercurius.Bridge.entity.EligibilityStatusRepresentation;
 import com.Mercurius.Bridge.entity.OfferRepresentation;
+import com.Mercurius.Bridge.entity.Order;
+import com.Mercurius.Bridge.entity.OrderItem;
 import com.Mercurius.Bridge.entity.ProductRepresentation;
 import com.Mercurius.Bridge.service.IBridgeService;
 import com.Mercurius.Bridge.service.clients.AccountManagementClient;
 import com.Mercurius.Bridge.service.clients.BundledProductsClient;
 import com.Mercurius.Bridge.service.clients.EligibilityChecksClient;
+import com.Mercurius.Bridge.service.clients.OrderManagementClient;
 import com.Mercurius.Bridge.service.clients.ProductOfferingsClient;
 
 @Service
@@ -31,15 +34,18 @@ public class BridgeServiceImpl implements IBridgeService {
 	ProductOfferingsClient productOfferingsClient;
 	@Autowired
 	private BundledProductsClient bundledProductsClient;
+	@Autowired
+	private OrderManagementClient orderManagementClient;
 
 	public BridgeServiceImpl(AccountManagementClient accountManagementClient,
 			EligibilityChecksClient eligibilityChecksClient, ProductOfferingsClient productOfferingsClient,
-			BundledProductsClient bundledProductsClient) {
+			BundledProductsClient bundledProductsClient, OrderManagementClient orderManagementClient) {
 		super();
 		this.accountManagementClient = accountManagementClient;
 		this.eligibilityChecksClient = eligibilityChecksClient;
 		this.productOfferingsClient = productOfferingsClient;
 		this.bundledProductsClient = bundledProductsClient;
+		this.orderManagementClient = orderManagementClient;
 	}
 
 	@Override
@@ -65,17 +71,16 @@ public class BridgeServiceImpl implements IBridgeService {
 	@Override
 	public ProductRepresentation getBaseProductById(String productId) {
 
-			ResponseEntity<ProductRepresentation> message = productOfferingsClient.getProductById(productId);
-			return message.getBody();
+		ResponseEntity<ProductRepresentation> message = productOfferingsClient.getProductById(productId);
+		return message.getBody();
 
 	}
 
 	@Override
 	public List<ProductRepresentation> listBaseProducts() {
 
-	
-			ResponseEntity<List<ProductRepresentation>> message = productOfferingsClient.getAllProducts();
-			return message.getBody();
+		ResponseEntity<List<ProductRepresentation>> message = productOfferingsClient.getAllProducts();
+		return message.getBody();
 	}
 
 	@Override
@@ -166,16 +171,13 @@ public class BridgeServiceImpl implements IBridgeService {
 
 	}
 
-
 	@Override
 	public EligibilityStatusRepresentation evaluateEligibility(String userId, String productId) {
-		
-			ResponseEntity<EligibilityStatusRepresentation> message = eligibilityChecksClient
-					.evaluateEligibility(userId, productId);
-			return message.getBody();
-	}
 
-	
+		ResponseEntity<EligibilityStatusRepresentation> message = eligibilityChecksClient.evaluateEligibility(userId,
+				productId);
+		return message.getBody();
+	}
 
 	@Override
 	public ResponseEntity<ResponseDto> createOfferForUser(String userId, OfferRepresentation offer) {
@@ -191,12 +193,32 @@ public class BridgeServiceImpl implements IBridgeService {
 
 	@Override
 	public List<ProductRepresentation> getEligibleProductsForUser(String userId) {
-		ResponseEntity<List<ProductRepresentation>> response=eligibilityChecksClient.getEligibleProductsForUser(userId);
+		ResponseEntity<List<ProductRepresentation>> response = eligibilityChecksClient
+				.getEligibleProductsForUser(userId);
 		return response.getBody();
 	}
 
-	
+	@Override
+	public ResponseEntity<ResponseDto> createOrder(Order order) {
 
-	
+		return orderManagementClient.createOrder(order);
+	}
+
+	@Override
+	public ResponseEntity<ResponseDto> createOrderItem(OrderItem orderItem) {
+		return orderManagementClient.createOrderItem(orderItem);
+	}
+
+	@Override
+	public ResponseEntity<List<Order>> getAllOrders() {
+
+		return orderManagementClient.getAllOrders();
+	}
+
+	@Override
+	public ResponseEntity<List<OrderItem>> getCart(String accString) {
+
+		return orderManagementClient.getCart(accString);
+	}
 
 }

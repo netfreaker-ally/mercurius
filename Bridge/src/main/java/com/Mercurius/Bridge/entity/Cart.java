@@ -1,4 +1,4 @@
-package com.Mercurius.Notifications.entity;
+package com.Mercurius.Bridge.entity;
 
 import java.util.List;
 
@@ -11,7 +11,7 @@ public class Cart {
 
 	
 	private String accountId;
-
+	@JsonIgnore
 	private List<OrderItem> orderItems;
 
 	public Cart() {

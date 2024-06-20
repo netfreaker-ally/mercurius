@@ -4,13 +4,24 @@ import java.util.List;
 import java.util.Set;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.Mercurius.Bridge.dto.ResponseDto;
 import com.Mercurius.Bridge.entity.AccountRepresentation;
 import com.Mercurius.Bridge.entity.BundledProductRepresentation;
 import com.Mercurius.Bridge.entity.EligibilityStatusRepresentation;
 import com.Mercurius.Bridge.entity.OfferRepresentation;
+import com.Mercurius.Bridge.entity.Order;
+import com.Mercurius.Bridge.entity.OrderItem;
 import com.Mercurius.Bridge.entity.ProductRepresentation;
+
+import jakarta.validation.Valid;
 
 public interface IBridgeService {
 	// Base Product Management
@@ -49,13 +60,21 @@ public interface IBridgeService {
 	// Eligibility Checks
 	EligibilityStatusRepresentation evaluateEligibility(String userId, String productId);
 
-
-
 	// Combined Business Logic
 	ResponseEntity<ResponseDto> createOfferForUser(String userId, OfferRepresentation offer);
 
 	Set<OfferRepresentation> getUserOffers(String userId);
+
 	List<ProductRepresentation> getEligibleProductsForUser(String userId);
-	
+
+	// Order Related Methods
+
+	ResponseEntity<ResponseDto> createOrder( Order order);
+
+	ResponseEntity<ResponseDto> createOrderItem(OrderItem orderItem);
+
+	ResponseEntity<List<Order>> getAllOrders();
+
+	ResponseEntity<List<OrderItem>> getCart( String accString);
 
 }

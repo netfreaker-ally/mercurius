@@ -38,22 +38,30 @@ public class NotificationFunction {
 
 	public void sendMessageToProduct(ProductRepresentation product) {
 		product.setProductName("modifiedInNotification");
-		boolean isSend = streamBridge.send("communication-sent", product);
+		boolean isSend = streamBridge.send("updateCommunication-in-0", product);
+		if(isSend) {
+			System.out.println("---order Confirmattion send to  product service----");
+		}
 
 	}
 	@Bean
 	public Function<Order, Order> orderCreated() {
 		return order -> {
-            log.info("order Confirmattion received from  order service");
-
-			System.out.println("---order Confirmattion received from  order service----");
 			receivedOrderConfirmation(order);
+            log.info("order Confirmattion received from  order service");
+            EmailDetails details = new EmailDetails("hanumaramavath9010@gmail.com", "Hey,This mail regarding confirmation",
+					"order is created");
+
+			String status = emailService.sendSimpleMail(details);
+			System.out.println("Status:\n"+status);
+			System.out.println("---order Confirmattion received from  order service----"+order.toString());
+			
 			return order;
 		};
 	}
 	public void receivedOrderConfirmation(Order order) {
 		System.out.println("---order Confirmattion received from  order service----");
-		boolean isSend=streamBridge.send("received-order-confirmation", order);
+		boolean isSend=streamBridge.send("orderconfirmed-in-0", order);
 		if(isSend)
 			System.out.println("---order Confirmattion send to order service----");
 	}

@@ -1,39 +1,43 @@
-#  mail:
+mail:
 #    host: smtp.gmail.com
 #    port: 587
 #    username: netfreakerr@gmail.com
-#    password: wemkwehlmqnjmzbt  
-  
+#    password: wemkwehlmqnjmzbt
+#    properties:
+#      mail:
+#       smtp:
+#        auth: true
+#        starttls:
+#         enable: true
 server:
   port: 9010
 
 spring:
+
+         
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    connection-timeout: 10s
   application:
     name: "Notifications"
-
-cloud:
-  function:
-    definition: orderCreated
-#      productcreated: productcreated
-#      orderCreated: orderCreated
-    
-     
-  stream:
-    bindings:
-#      productcreated-in-0:
-#        destination: sendCommunicationAsProductCreated
-#        group: ${spring.application.name}
-#      productcreated-out-0:
-#        destination: communication-sent
-      orderCreated-in-0:
-        destination: Order-Confirmed    
-        group: ${spring.application.name}
-      orderCreated-out-0:
-        destination: received-order-confirmation
-
-rabbitmq:
-  host: localhost
-  port: 5672
-  username: guest
-  password: guest
-  connection-timeout: 10s
+  cloud:
+    function:
+      definition: orderCreated;productcreated
+       
+       
+       
+    stream:
+      bindings:
+        productcreated-in-0:
+          destination: sendCommunicationAsProductCreated
+          group: ${spring.application.name}
+        productcreated-out-0:
+          destination: communication-sent
+        orderCreated-in-0:
+          destination: Order-Confirmed
+          group: ${spring.application.name} 
+        orderCreated-out-0:
+          destination: received-order-confirmation

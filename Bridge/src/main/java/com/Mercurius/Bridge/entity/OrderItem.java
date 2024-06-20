@@ -1,4 +1,4 @@
-package com.Mercurius.Notifications.entity;
+package com.Mercurius.Bridge.entity;
 
 import java.sql.Date;
 import java.util.List;

@@ -1,13 +1,9 @@
-package com.Mercurius.Notifications.entity;
+package com.Mercurius.Bridge.entity;
 
 import java.sql.Date;
 import java.util.List;
 
-
-import org.springframework.format.annotation.DateTimeFormat;
-
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 
 
@@ -18,7 +14,7 @@ public class Order {
 	
 	private Date orderDate;
 
-
+	@JsonIdentityReference(alwaysAsId = true)
 	private List<OrderItem> orderItems;
 
 	public String getOrderId() {

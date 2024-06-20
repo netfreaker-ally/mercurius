@@ -13,7 +13,7 @@ public class ProductsFunction {
 	@Bean
 	public Consumer<ProductRepresentation> updateCommunication(IProductManagementService productManagement) {
 		return productRepresentaion -> {
-
+			System.out.println("-----product confirmation received from rabbitmq----");
 			productManagement.updateCommunicationStatus(productRepresentaion);
 		};
 	}
