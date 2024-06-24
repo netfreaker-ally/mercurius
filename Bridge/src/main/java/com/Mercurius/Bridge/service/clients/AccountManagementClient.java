@@ -20,7 +20,7 @@ import jakarta.validation.Valid;
 public interface AccountManagementClient {
 
 	@PostMapping("/api/create")
-	public ResponseEntity<ResponseDto> createAccount(@Valid@RequestBody AccountRepresentation account);
+	public ResponseEntity<ResponseDto> createAccount(@Valid @RequestBody AccountRepresentation account);
 	@GetMapping("/api/{id}")
 	public ResponseEntity<AccountRepresentation> getAccountById(@PathVariable("id") String accountId);
 

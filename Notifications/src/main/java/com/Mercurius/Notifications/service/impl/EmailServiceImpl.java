@@ -29,15 +29,16 @@ public class EmailServiceImpl implements EmailService {
 		try {
 			
 			SimpleMailMessage mailMessage = new SimpleMailMessage();
-		
 			
+		
+			System.out.println("Details are: "+details.toString());
 			mailMessage.setFrom("netfreakerr@gmail.com");
 			
 			mailMessage.setTo("hanumaramavath9010@gmail.com");
 			mailMessage.setText("This is sample message");
 			mailMessage.setSubject("just a message");
 			
-			javaMailSender.send(mailMessage);
+//			javaMailSender.send(mailMessage);
 			return "Mail Sent Successfully...";
 		} catch (Exception e) {
 			return "Error while Sending Mail:\n" + e.getMessage();

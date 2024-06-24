@@ -76,5 +76,7 @@ public interface IBridgeService {
 	ResponseEntity<List<Order>> getAllOrders();
 
 	ResponseEntity<List<OrderItem>> getCart( String accString);
+	//
+	 OrderItem generateOrderItem(OrderItem orderItem);
 
 }

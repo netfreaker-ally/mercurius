@@ -172,6 +172,7 @@ public class EligibilityServiceImpl implements IEligibilityService {
 	@Override
 	public Set<OfferRepresentation> getUserOffers(String accountId) {
 		try {
+			System.out.println("accuntId in eligibility: "+accountId);
 			AccountRepresentation user = accountsRepository.findByAccountId(accountId)
 					.orElseThrow(() -> new ResourceNotFoundException("User not found", accountId, ""));
 			Set<OfferRepresentation> offers = user.getOffers();

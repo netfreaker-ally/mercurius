@@ -1,5 +1,9 @@
 package com.Mercurius.Notifications.functions;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.function.Function;
 
 import org.slf4j.Logger;
@@ -11,6 +15,7 @@ import org.springframework.context.annotation.Configuration;
 
 import com.Mercurius.Notifications.entity.EmailDetails;
 import com.Mercurius.Notifications.entity.Order;
+import com.Mercurius.Notifications.entity.PdfGenerator;
 import com.Mercurius.Notifications.entity.ProductRepresentation;
 import com.Mercurius.Notifications.service.EmailService;
 
@@ -20,7 +25,7 @@ public class NotificationFunction {
 	StreamBridge streamBridge;
 	@Autowired
 	private EmailService emailService;
-	 private static final Logger log = LoggerFactory.getLogger(NotificationFunction.class);
+	private static final Logger log = LoggerFactory.getLogger(NotificationFunction.class);
 
 	@Bean
 	public Function<ProductRepresentation, ProductRepresentation> productcreated() {
@@ -39,30 +44,57 @@ public class NotificationFunction {
 	public void sendMessageToProduct(ProductRepresentation product) {
 		product.setProductName("modifiedInNotification");
 		boolean isSend = streamBridge.send("updateCommunication-in-0", product);
-		if(isSend) {
+		if (isSend) {
 			System.out.println("---order Confirmattion send to  product service----");
 		}
 
 	}
+
 	@Bean
 	public Function<Order, Order> orderCreated() {
 		return order -> {
 			receivedOrderConfirmation(order);
-            log.info("order Confirmattion received from  order service");
-            EmailDetails details = new EmailDetails("hanumaramavath9010@gmail.com", "Hey,This mail regarding confirmation",
-					"order is created");
-
-			String status = emailService.sendSimpleMail(details);
-			System.out.println("Status:\n"+status);
-			System.out.println("---order Confirmattion received from  order service----"+order.toString());
+			log.info("order Confirmattion received from  order service");
 			
+
+			EmailDetails details = new EmailDetails("hanumaramavath9010@gmail.com", "order is created", "Hey,This mail regarding confirmation");
+			/* String status = emailService.sendSimpleMail(details); */
+			PdfGenerator pdfGenerator=new PdfGenerator();
+			byte[] pdfData = null;
+			try {
+				pdfData = pdfGenerator.generatePdf(order);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+
+			if (pdfData != null) {	
+				String accountId=order.getAccountId();
+			    try (FileOutputStream outputStream = new FileOutputStream(accountId+"_"+"invoice.pdf")) {
+			        outputStream.write(pdfData);
+			    } catch (IOException e) {
+			        // Handle file writing exception
+			        System.err.println("Error writing PDF to file: " + e.getMessage());
+			    }
+			} else {
+			  
+			    System.out.println("Failed to generate PDF.");
+			}
+			System.out.println("---order Confirmattion received from  order service----" + order.toString());
+
 			return order;
 		};
 	}
+
 	public void receivedOrderConfirmation(Order order) {
-		System.out.println("---order Confirmattion received from  order service----");
-		boolean isSend=streamBridge.send("orderconfirmed-in-0", order);
-		if(isSend)
-			System.out.println("---order Confirmattion send to order service----");
+		/*
+		 * System.out.println("---order Confirmattion received from  order service----"
+		 * );
+		 */		boolean isSend = streamBridge.send("orderconfirmed-in-0", order);
+		/*
+		 * if (isSend)
+		 * System.out.println("---order Confirmattion send to order service----");
+		 */
 	}
 }

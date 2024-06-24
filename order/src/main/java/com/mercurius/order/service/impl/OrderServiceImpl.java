@@ -56,6 +56,7 @@ public class OrderServiceImpl implements OrderService {
 
 		orderRepository.save(order);
 		sendOrderConfirmation(order);
+		
 
 		// Optionally clear the cart
 		// cartRepository.deleteAll();

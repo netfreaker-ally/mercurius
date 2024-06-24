@@ -34,6 +34,7 @@ public class AccountsController {
 
 	@PostMapping("/create")
 	public ResponseEntity<ResponseDto> createAccount(@Valid@RequestBody AccountRepresentation account) {
+		System.out.println(account.toString());
 		accountManagementService.createAccount(account);
 		return ResponseEntity
                 .status(HttpStatus.CREATED)

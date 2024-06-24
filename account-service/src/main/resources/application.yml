@@ -4,17 +4,35 @@ spring:
  application:
   name: account-service
  datasource:
-    url: jdbc:mysql://sql12.freemysqlhosting.net:3306/sql12712947
-    driverClassName: com.mysql.cj.jdbc.Driver
-    username: sql12712947
-    password: Wygs35Nzqf
-    hikari:
-      # Consider these connection pool settings for better performance
-      poolName: HikariPool
-      minimumIdle: 5
-      maximumPoolSize: 10
-      autoCommit: true
-
+    url: jdbc:h2:mem:testdb
+    driverClassName: org.h2.Driver
+    username: sa
+    password: ''
+ h2:
+    console:
+      enabled: true
+ jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+# datasource:
+#    url: jdbc:mysql://sql12.freemysqlhosting.net:3306/sql12712947
+#    driverClassName: com.mysql.cj.jdbc.Driver
+#    username: sql12712947
+#    password: Wygs35Nzqf
+#    hikari:
+#      # Consider these connection pool settings for better performance
+#      poolName: HikariPool
+#      minimumIdle: 5
+#      maximumPoolSize: 10
+#      autoCommit: true
+#      
+# jpa:
+#    database-platform: org.hibernate.dialect.MySQL8Dialect
+#    hibernate:
+#      ddl-auto: update
+#    show-sql: true
  cloud:
   openfeign:
       circuitbreaker:
@@ -22,11 +40,7 @@ spring:
  
 
  
- jpa:
-    database-platform: org.hibernate.dialect.MySQL8Dialect
-    hibernate:
-      ddl-auto: update
-    show-sql: true
+ 
 
 management:
   health:

@@ -1,23 +1,25 @@
 package com.Mercurius.Notifications.entity;
 
-public class EmailDetails {
+import jakarta.validation.constraints.Email;
 
+public class EmailDetails {
+	@Email
 	private String recipient;
 	private String msgBody;
 	private String subject;
 	private String attachment;
 
+	public EmailDetails(String recipient, String subject, String msgBody) {
+		super();
+		this.recipient = recipient;
+		this.subject = subject;
+		this.msgBody = msgBody;
+
+	}
+
 	public EmailDetails(String recipient, String msgBody, String subject, String attachment) {
 		super();
 		this.recipient = recipient;
-		this.msgBody = msgBody;
-		this.subject = subject;
-		this.attachment = attachment;
-	}
-
-	public EmailDetails(String recipient, String msgBody, String subject) {
-		super();
-
 		this.msgBody = msgBody;
 		this.subject = subject;
 		this.attachment = attachment;
@@ -57,6 +59,12 @@ public class EmailDetails {
 
 	public void setAttachment(String attachment) {
 		this.attachment = attachment;
+	}
+
+	@Override
+	public String toString() {
+		return "EmailDetails [recipient=" + recipient + ", msgBody=" + msgBody + ", subject=" + subject
+				+ ", attachment=" + attachment + "]";
 	}
 
 }
