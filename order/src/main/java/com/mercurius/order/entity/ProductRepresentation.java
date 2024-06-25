@@ -6,8 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 
-@AllArgsConstructor
-@Data
+//@AllArgsConstructor
+//@Data
 public class ProductRepresentation {
 	
 	private Long id;

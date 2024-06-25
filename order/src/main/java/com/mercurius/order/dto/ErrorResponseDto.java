@@ -7,7 +7,7 @@ import org.springframework.http.HttpStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-@Data @AllArgsConstructor
+//@Data @AllArgsConstructor
 
 public class ErrorResponseDto {
 
@@ -22,6 +22,12 @@ public class ErrorResponseDto {
 
    
     private LocalDateTime errorTime;
+
+
+	public ErrorResponseDto() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
 
 
 	public ErrorResponseDto(String apiPath, HttpStatus errorCode, String errorMessage, LocalDateTime errorTime) {

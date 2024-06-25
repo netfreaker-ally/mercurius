@@ -18,8 +18,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-@AllArgsConstructor
-@Data
+//@AllArgsConstructor
+//@Data
 @Entity(name = "account")
 public class AccountRepresentation {
     @Id

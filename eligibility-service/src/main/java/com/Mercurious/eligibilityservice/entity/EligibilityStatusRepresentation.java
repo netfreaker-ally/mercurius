@@ -3,9 +3,9 @@ package com.Mercurious.eligibilityservice.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-
-@AllArgsConstructor
-@Data
+//
+//@AllArgsConstructor
+//@Data
 
 public class EligibilityStatusRepresentation {
 

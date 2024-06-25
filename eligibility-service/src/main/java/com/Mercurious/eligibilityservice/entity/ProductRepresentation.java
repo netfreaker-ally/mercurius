@@ -10,8 +10,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Entity(name = "product")
-@AllArgsConstructor
-@Data
+//@AllArgsConstructor
+//@Data
 public class ProductRepresentation {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

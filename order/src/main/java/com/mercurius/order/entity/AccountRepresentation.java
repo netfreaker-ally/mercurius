@@ -7,8 +7,8 @@ import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-@AllArgsConstructor
-@Data
+//@AllArgsConstructor
+//@Data
 
 public class AccountRepresentation {
 

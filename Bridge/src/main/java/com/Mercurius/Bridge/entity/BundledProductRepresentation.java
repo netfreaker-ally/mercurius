@@ -4,8 +4,8 @@ import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-@Data
-@AllArgsConstructor
+//@Data
+//@AllArgsConstructor
 
 public class BundledProductRepresentation {
 	private String productId;
