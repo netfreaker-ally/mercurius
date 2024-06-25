@@ -211,6 +211,15 @@ public class AccountRepresentation {
 	public void setOffers(Set<OfferRepresentation> offers) {
 		this.offers = offers;
 	}
+
+	@Override
+	public String toString() {
+		return "AccountRepresentation [id=" + id + ", accountId=" + accountId + ", accountName=" + accountName
+				+ ", accountType=" + accountType + ", balance=" + balance + ", createdDate=" + createdDate
+				+ ", updatedDate=" + updatedDate + ", isActive=" + isActive + ", age=" + age + ", location=" + location
+				+ ", income=" + income + ", employmentStatus=" + employmentStatus + ", membershipLevel="
+				+ membershipLevel + ", offers=" + offers + "]";
+	}
     
 
 	

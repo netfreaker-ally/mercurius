@@ -52,7 +52,7 @@ public class ProductController {
 	
 	}
 
-	@PutMapping
+	@PutMapping("/products")
 	public ResponseEntity<ResponseDto> updateProduct(
 			@Valid@RequestBody ProductRepresentation product) {
 		boolean isUpdated= iProductManagementService.updateProduct(product);

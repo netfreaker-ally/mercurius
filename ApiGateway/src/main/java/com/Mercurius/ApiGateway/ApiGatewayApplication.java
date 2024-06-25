@@ -50,6 +50,14 @@ public class ApiGatewayApplication {
 										.setName("bridgeCircuitBreaker").setFallbackUri("forward:/Support")))
 						.uri("http://localhost:8082/")
 
+				)
+				.route(p -> p.path("/mercurius/order/**")
+						.filters(f -> f.rewritePath("/mercurius/order/(?<segment>.*)", "/${segment}")
+								.addResponseHeader("X-Response-Time", LocalDateTime.now().toString())
+								.addResponseHeader("Responsible", "Hanuma Ramavath").circuitBreaker(config -> config
+										.setName("orderCircuitBreaker").setFallbackUri("forward:/Support")))
+						.uri("http://localhost:9092/")
+
 				).build();
 
 	}
