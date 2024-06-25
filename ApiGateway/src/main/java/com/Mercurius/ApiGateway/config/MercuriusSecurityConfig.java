@@ -17,20 +17,31 @@ import reactor.core.publisher.Mono;
 public class MercuriusSecurityConfig {
 	@Bean
 	SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity serverHttpSecurity) {
-		serverHttpSecurity.authorizeExchange(exchange -> exchange.pathMatchers(HttpMethod.GET).permitAll()
-				.pathMatchers("/mercurius/accounts/**").hasAnyRole("USER,ADMIN").pathMatchers("/mercurius/products/**")
-				.hasAnyRole("USER,ADMIN").pathMatchers("/mercurius/elibility/**").hasAnyRole("ADMIN")
-				.pathMatchers("/mercurius/bridge/**").hasAnyRole("USER,ADMIN"))
-				.oauth2ResourceServer(oAuth2ResourceServerSpec -> oAuth2ResourceServerSpec
-						.jwt(jwtSpec -> jwtSpec.jwtAuthenticationConverter(grantedAuthoritiesExtractor())));
-		serverHttpSecurity.csrf(csrfSpec -> csrfSpec.disable());
-		return serverHttpSecurity.build();
-
+	    serverHttpSecurity.authorizeExchange(exchange -> exchange
+	            .pathMatchers(HttpMethod.GET).permitAll()
+	            .pathMatchers("/mercurius/accounts/**").hasAnyRole("USER", "ADMIN")
+	            .pathMatchers("/mercurius/products/**").hasAnyRole("USER", "ADMIN")
+	            .pathMatchers("/mercurius/elibility/**").hasAnyRole("ADMIN")
+	            .pathMatchers("/mercurius/bridge/**").hasAnyRole("USER", "ADMIN")
+	            .pathMatchers("/mercurius/order/**").hasAnyRole("USER", "ADMIN"))
+	            .oauth2ResourceServer(oAuth2ResourceServerSpec -> oAuth2ResourceServerSpec
+	                    .jwt(jwtSpec -> jwtSpec.jwtAuthenticationConverter(grantedAuthoritiesExtractor())));
+	    serverHttpSecurity.csrf(csrfSpec -> csrfSpec.disable());
+	    return serverHttpSecurity.build();
 	}
 
 	private Converter<Jwt, Mono<AbstractAuthenticationToken>> grantedAuthoritiesExtractor() {
-		JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
-		jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(new KeycloakRoleConverter());
-		return new ReactiveJwtAuthenticationConverterAdapter(jwtAuthenticationConverter);
+	    JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
+	    jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(new KeycloakRoleConverter());
+	    return new ReactiveJwtAuthenticationConverterAdapter(jwtAuthenticationConverter);
+	}
+	
+
+
+	@Bean
+	public ReactiveJwtAuthenticationConverterAdapter jwtConverter() {
+		JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
+		converter.setJwtGrantedAuthoritiesConverter(new KeycloakRoleConverter());
+		return new ReactiveJwtAuthenticationConverterAdapter(converter);
 	}
 }

@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import com.Mercurious.productservice.entity.ProductRepresentation;
 import com.Mercurious.productservice.exception.ProductAlreadyExistsException;
 import com.Mercurious.productservice.exception.ResourceNotFoundException;
-import com.Mercurious.productservice.repository.AccountsRepository;
 import com.Mercurious.productservice.repository.ProductRepository;
 import com.Mercurious.productservice.service.IProductManagementService;
 
@@ -20,15 +19,14 @@ import jakarta.transaction.Transactional;
 public class ProductServiceImpl implements IProductManagementService {
 	@Autowired
 	ProductRepository productRepository;
-	@Autowired
-	private AccountsRepository accountRepository;
+
 	@Autowired
 	StreamBridge streamBridge;
 
-	public ProductServiceImpl(ProductRepository productRepository, AccountsRepository accountRepository) {
+	public ProductServiceImpl(ProductRepository productRepository) {
 		super();
 		this.productRepository = productRepository;
-		this.accountRepository = accountRepository;
+
 	}
 
 	@Override
@@ -49,10 +47,11 @@ public class ProductServiceImpl implements IProductManagementService {
 		sendCommunicationAsProductCreated(product);
 		return productRepository.save(product);
 	}
+
 	public void sendCommunicationAsProductCreated(ProductRepresentation product) {
-		System.out.println("---------Product Created with name-----------"+product.getProductName());
-		 boolean isSend=streamBridge.send("sendCommunicationAsProductCreated", product);	
-		
+		System.out.println("---------Product Created with name-----------" + product.getProductName());
+		boolean isSend = streamBridge.send("sendCommunicationAsProductCreated", product);
+
 	}
 
 	@Override
@@ -63,17 +62,17 @@ public class ProductServiceImpl implements IProductManagementService {
 					.orElseThrow(() -> new ResourceNotFoundException("Product not found with id ",
 							product.getProductId(), ""));
 
-		
 			productDetails.setDescription(product.getDescription());
 			productDetails.setPrice(product.getPrice());
 			productDetails.setProductId(product.getProductId());
 			productDetails.setProductName(product.getProductName());
+			productDetails.setStock(product.getStock());
 
 			productRepository.save(productDetails);
 			isUpdated = true;
 			return isUpdated;
 		} catch (Exception e) {
-			throw new RuntimeException("Error Occurred while Updating"+e.getMessage());
+			throw new RuntimeException("Error Occurred while Updating" + e.getMessage());
 		}
 	}
 
@@ -101,7 +100,7 @@ public class ProductServiceImpl implements IProductManagementService {
 
 	@Override
 	public ProductRepresentation updateCommunicationStatus(ProductRepresentation product) {
-		System.out.println("--------Subscribed in Product Service----------"+product.getProductName());	
+		System.out.println("--------Subscribed in Product Service----------" + product.getProductName());
 		return product;
 	}
 

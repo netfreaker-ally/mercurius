@@ -1,65 +1,48 @@
 package com.mercurius.order.entity;
 
-
 import java.sql.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-
-
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+
 @AllArgsConstructor
 @Data
 
 public class AccountRepresentation {
-  
-    private Long id;
 
-  
-    private String accountId;
- 
-    private String accountType;
+	private Long id;
 
- 
-    private Double balance;
+	private String accountId;
 
-   
-    private Date createdDate;
+	private String accountType;
 
-   
-    private Date updatedDate;
+	private Double balance;
 
-    private boolean isActive;
+	private Date createdDate;
 
+	private Date updatedDate;
 
-    private Integer age;
+	private boolean isActive;
 
-  
-    private String location;
+	private Integer age;
 
-  
-    private Double income;
-  
-    private String employmentStatus;
+	private String location;
 
+	private Double income;
 
-    private boolean membershipLevel;
-   
-   
-    private Set<OfferRepresentation> offers = new HashSet<>();
+	private String employmentStatus;
 
+	private boolean membershipLevel;
 
-	public AccountRepresentation(Long id, @NotBlank(message = "Account ID is required") String accountId,
-			@NotBlank(message = "Account type is required") String accountType,
-			@NotNull(message = "Balance is required") Double balance, Date createdDate, Date updatedDate,
-			boolean isActive, @NotNull(message = "Age is required") Integer age,
-			@NotBlank(message = "Location is required") String location,
-			@NotNull(message = "Income is required") Double income,
-			@NotBlank(message = "Employment Status is required") String employmentStatus, boolean membershipLevel,
-			Set<OfferRepresentation> offers) {
+	private String accountName;
+
+	private Set<OfferRepresentation> offers = new HashSet<>();
+
+	public AccountRepresentation(Long id, String accountId, String accountType, Double balance, Date createdDate,
+			Date updatedDate, boolean isActive, Integer age, String location, Double income, String employmentStatus,
+			boolean membershipLevel, String accountName, Set<OfferRepresentation> offers) {
 		super();
 		this.id = id;
 		this.accountId = accountId;
@@ -73,6 +56,7 @@ public class AccountRepresentation {
 		this.income = income;
 		this.employmentStatus = employmentStatus;
 		this.membershipLevel = membershipLevel;
+		this.accountName = accountName;
 		this.offers = offers;
 	}
 
@@ -83,6 +67,14 @@ public class AccountRepresentation {
 
 	public Long getId() {
 		return id;
+	}
+
+	public String getAccountName() {
+		return accountName;
+	}
+
+	public void setAccountName(String accountName) {
+		this.accountName = accountName;
 	}
 
 	public void setId(Long id) {
@@ -184,10 +176,5 @@ public class AccountRepresentation {
 	public void setOffers(Set<OfferRepresentation> offers) {
 		this.offers = offers;
 	}
-    
-
-	
-	
-
 
 }

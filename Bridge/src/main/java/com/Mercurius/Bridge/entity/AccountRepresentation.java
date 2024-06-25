@@ -47,19 +47,17 @@ public class AccountRepresentation {
 
 
     private boolean membershipLevel;
-   
+  
+	private String accountName;
    
     private Set<OfferRepresentation> offers = new HashSet<>();
 
 
-	public AccountRepresentation(Long id, @NotBlank(message = "Account ID is required") String accountId,
-			@NotBlank(message = "Account type is required") String accountType,
-			@NotNull(message = "Balance is required") Double balance, Date createdDate, Date updatedDate,
-			boolean isActive, @NotNull(message = "Age is required") Integer age,
-			@NotBlank(message = "Location is required") String location,
-			@NotNull(message = "Income is required") Double income,
-			@NotBlank(message = "Employment Status is required") String employmentStatus, boolean membershipLevel,
-			Set<OfferRepresentation> offers) {
+	
+
+	public AccountRepresentation(Long id, String accountId, String accountType, Double balance, Date createdDate,
+			Date updatedDate, boolean isActive, Integer age, String location, Double income, String employmentStatus,
+			boolean membershipLevel, String accountName, Set<OfferRepresentation> offers) {
 		super();
 		this.id = id;
 		this.accountId = accountId;
@@ -73,6 +71,7 @@ public class AccountRepresentation {
 		this.income = income;
 		this.employmentStatus = employmentStatus;
 		this.membershipLevel = membershipLevel;
+		this.accountName = accountName;
 		this.offers = offers;
 	}
 
@@ -83,6 +82,14 @@ public class AccountRepresentation {
 
 	public Long getId() {
 		return id;
+	}
+
+	public String getAccountName() {
+		return accountName;
+	}
+
+	public void setAccountName(String accountName) {
+		this.accountName = accountName;
 	}
 
 	public void setId(Long id) {

@@ -251,7 +251,7 @@ Set<OfferRepresentation> offers=accountRepresentation.getOffers();
 	    productRepresentation.setAvailable(orderItem.getQuantity() == productRepresentation.getStock());
 	    productRepresentation.setStock(productRepresentation.getStock() - orderItem.getQuantity());
  
-//	    productOfferingsClient.updateProduct(productRepresentation);
+	    productOfferingsClient.updateProduct(productRepresentation);
 
 	    PriceComponent priceComponent = new PriceComponent();
 	    priceComponent.setSellingPrice(productRepresentation.getPrice());
@@ -261,6 +261,7 @@ Set<OfferRepresentation> offers=accountRepresentation.getOffers();
 
 	    double totalPrice = priceComponent.getSellingPrice() * (1 - maxDiscountPercentage / 100);
 	    totalPrice = Math.round(totalPrice * 100) / 100.0;
+	    totalPrice+=priceComponent.getShippingCharge();
 
 	    priceComponent.setTotalPrice(totalPrice);
 	    priceComponent.setCustomerPrice(totalPrice);
