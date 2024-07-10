@@ -1,18 +1,20 @@
 package com.Mercurius.accountservice.service;
 
-import java.util.List;
+import org.springframework.web.reactive.function.server.ServerRequest;
+import org.springframework.web.reactive.function.server.ServerResponse;
 
-import com.Mercurius.accountservice.entity.AccountRepresentation;
+
+import reactor.core.publisher.Mono;
 
 public interface IAccountManagementService {
-	AccountRepresentation createAccount(AccountRepresentation account);
+	Mono<ServerResponse> createAccount(ServerRequest serverRequest);
 
-	AccountRepresentation getAccountById(String accountId);
+	Mono<ServerResponse> getAccounts(ServerRequest serverRequest);
 
-	boolean updateAccount(AccountRepresentation account);
+	Mono<ServerResponse> updateAccount(ServerRequest serverRequest);
 
-	boolean deleteAccount(String accountId);
+	Mono<ServerResponse> deleteAccount(ServerRequest serverRequest);
 
-	List<AccountRepresentation> getAllAccounts();
+
 
 }

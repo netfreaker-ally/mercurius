@@ -1,18 +1,13 @@
 package com.Mercurius.accountservice.repository;
 
-import java.util.Optional;
-
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 
 import com.Mercurius.accountservice.entity.AccountRepresentation;
 
-import jakarta.transaction.Transactional;
+import reactor.core.publisher.Mono;
 
-public interface AccountsRepository extends JpaRepository<AccountRepresentation, Long> {
-	Optional<AccountRepresentation> findByAccountId(String accountId);
+public interface AccountsRepository extends ReactiveCrudRepository<AccountRepresentation, Long> {
+	Mono<AccountRepresentation> findByAccountId(String accountId);
 
-	@Transactional
-	@Modifying
 	void deleteByAccountId(String accountId);
 }
