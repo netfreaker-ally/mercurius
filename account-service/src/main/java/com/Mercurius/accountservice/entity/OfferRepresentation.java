@@ -5,7 +5,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.springframework.data.annotation.Id;
-import org.springframework.data.relational.core.mapping.Table;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
@@ -23,11 +24,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@Table(name = "offer")
+@Document(value = "offer")
 public class OfferRepresentation {
 
 	@Id
-	
+
 	private Long id;
 
 	@NotBlank(message = "Offer ID is required")
@@ -46,11 +47,12 @@ public class OfferRepresentation {
 
 	@NotNull(message = "End date is required")
 	private Date endDate;
-	/*
-	 * @JsonBackReference
-	 * 
-	 * @ManyToMany(mappedBy = "offers")
-	 */
-	/* private Set<AccountRepresentation> accounts = new HashSet<>();; */
+
+	  @JsonBackReference
+	  
+//	  @ManyToMany(mappedBy = "offers")
+	  @DBRef
+	  private Set<AccountRepresentation> accounts = new HashSet<>();;
+	 
 
 }

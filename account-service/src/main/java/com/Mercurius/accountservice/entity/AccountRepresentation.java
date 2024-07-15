@@ -1,12 +1,12 @@
 package com.Mercurius.accountservice.entity;
 
-
-import java.sql.Date;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
 import org.springframework.data.annotation.Id;
-import org.springframework.data.relational.core.mapping.Table;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 /*
 import jakarta.persistence.CascadeType;
@@ -20,46 +20,43 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@Table(name = "account")
+@Document(value = "account")
 public class AccountRepresentation {
-    @Id
-    private Long id;
+	@Id
+	private String id;
 
-    @NotBlank(message = "Account ID is required")
-    private String accountId;
-    @NotBlank(message = "Account Name is required")
+	@NotBlank(message = "Account ID is required")
+	private String accountId;
+	@NotBlank(message = "Account Name is required")
 	private String accountName;
-    @NotBlank(message = "Account type is required")
-    private String accountType;
+	@NotBlank(message = "Account type is required")
+	private String accountType;
 
-    @NotNull(message = "Balance is required")
-    private Double balance;
+	@NotNull(message = "Balance is required")
+	private Double balance;
 
-   
-    private Date createdDate;
+	private Date createdDate;
 
-   
-    private Date updatedDate;
+	private Date updatedDate;
 
-    private boolean isActive;
+	private boolean isActive;
 
-    @NotNull(message = "Age is required")
-    private Integer age;
+	@NotNull(message = "Age is required")
+	private Integer age;
 
-    @NotBlank(message = "Location is required")
-    private String location;
+	@NotBlank(message = "Location is required")
+	private String location;
 
-    @NotNull(message = "Income is required")
-    private Double income;
-    @NotBlank(message = "Employment Status is required")
-    private String employmentStatus;
+	@NotNull(message = "Income is required")
+	private Double income;
+	@NotBlank(message = "Employment Status is required")
+	private String employmentStatus;
 
-
-    private boolean membershipLevel;
-
+	private boolean membershipLevel;
 
 	@Override
 	public String toString() {
@@ -69,18 +66,11 @@ public class AccountRepresentation {
 				+ ", income=" + income + ", employmentStatus=" + employmentStatus + ", membershipLevel="
 				+ membershipLevel + "]";
 	}
-   
-	/*
-	 * @ManyToMany(cascade = CascadeType.ALL)
-	 * 
-	 * @JoinTable( name = "account_offer", joinColumns = @JoinColumn(name =
-	 * "account_id"), inverseJoinColumns = @JoinColumn(name = "offer_id") ) private
-	 * Set<OfferRepresentation> offers = new HashSet<>();
-	 */
-    
 
-	
-	
-
+//	@ManyToMany(cascade = CascadeType.ALL)
+//
+//	@JoinTable(name = "account_offer", joinColumns = @JoinColumn(name = "account_id"), inverseJoinColumns = @JoinColumn(name = "offer_id"))
+	@DBRef
+	private Set<OfferRepresentation> offers = new HashSet<>();
 
 }

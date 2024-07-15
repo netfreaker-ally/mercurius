@@ -11,49 +11,80 @@ import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
 import com.Mercurius.accountservice.entity.AccountRepresentation;
+import com.Mercurius.accountservice.entity.OfferRepresentation;
 import com.Mercurius.accountservice.exception.AccountDataException;
 import com.Mercurius.accountservice.exception.CustomerAlreadyExistsException;
+import com.Mercurius.accountservice.exception.OfferAlreadyExistsException;
+import com.Mercurius.accountservice.exception.OfferDataException;
 import com.Mercurius.accountservice.exception.ResourceNotFoundException;
 import com.Mercurius.accountservice.repository.AccountsRepository;
+import com.Mercurius.accountservice.repository.OfferRepository;
 import com.Mercurius.accountservice.service.IAccountManagementService;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
+import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Component
+@Slf4j
 public class AccountsHandler implements IAccountManagementService {
 
 	@Autowired
 	private AccountsRepository accountRepository;
 	@Autowired
 	private Validator validator;
+	@Autowired
+	private OfferRepository offerRepository;
 	Date utilDate = new Date();
 
 	@Override
 	public Mono<ServerResponse> createAccount(ServerRequest serverRequest) {
-	    return serverRequest.bodyToMono(AccountRepresentation.class)
-	            .flatMap(this::validateAndSaveAccount)
-	            .flatMap(savedAccount -> ServerResponse.status(HttpStatus.CREATED).bodyValue(savedAccount));
+
+		return serverRequest.bodyToMono(AccountRepresentation.class).flatMap(this::validateAndSaveAccount)
+				.flatMap(savedAccount -> ServerResponse.status(HttpStatus.CREATED).bodyValue(savedAccount));
 	}
 
 	private Mono<AccountRepresentation> validateAndSaveAccount(AccountRepresentation newAccount) {
-	    return validateConstraints(newAccount)
-	            .then(accountRepository.findByAccountId(newAccount.getAccountId()))
-	            .flatMap(existingAccount -> Mono.error(new CustomerAlreadyExistsException(
-	                    "Customer already registered with given accountId " + newAccount.getAccountId())))
-	            .switchIfEmpty(Mono.defer(() -> accountRepository.save(newAccount)))
-	            .cast(AccountRepresentation.class); 
+		return validateConstraints(newAccount).then(accountRepository.findByAccountId(newAccount.getAccountId()))
+				.flatMap(existingAccount -> Mono.<AccountRepresentation>error(new CustomerAlreadyExistsException(
+						"Customer already registered with given accountId " + newAccount.getAccountId())))
+				.switchIfEmpty(Mono.defer(() -> {
+					newAccount.setCreatedDate(new java.sql.Date(new java.util.Date().getTime()));
+					return accountRepository.save(newAccount);
+				})).cast(AccountRepresentation.class);
 	}
 
+	@Override
+	public Mono<ServerResponse> createOffer(ServerRequest serverRequest) {
 
+		return serverRequest.bodyToMono(OfferRepresentation.class).flatMap(this::validateAndSaveOffer)
+				.flatMap(savedOffer -> ServerResponse.status(HttpStatus.CREATED).bodyValue(savedOffer));
+	}
 
+	private Mono<OfferRepresentation> validateAndSaveOffer(OfferRepresentation newOffer) {
+		return validateOfferConstraints(newOffer).then(offerRepository.findByOfferId(newOffer.getOfferId()))
+				.flatMap(existingOffer -> Mono.<OfferRepresentation>error(new OfferAlreadyExistsException(
+						"Offer already registered with given offerId " + newOffer.getOfferId())))
+				.switchIfEmpty(Mono.defer(() -> offerRepository.save(newOffer))).cast(OfferRepresentation.class);
+	}
 
+	private Mono<OfferRepresentation> validateOfferConstraints(OfferRepresentation offerDetails) {
+		var constraintViolations = validator.validate(offerDetails);
+		if (!constraintViolations.isEmpty()) {
+			log.error("Error got in valid constraints");
+			var errorMessage = constraintViolations.stream().map(ConstraintViolation::getMessage).sorted()
+					.collect(Collectors.joining(","));
+			return Mono.error(new OfferDataException(errorMessage));
+		}
+		return Mono.just(offerDetails);
+	}
 
 	private Mono<AccountRepresentation> validateConstraints(AccountRepresentation accountDetails) {
 		var constraintViolations = validator.validate(accountDetails);
 		if (!constraintViolations.isEmpty()) {
+			log.error("Error got in valid constraints");
 			var errorMessage = constraintViolations.stream().map(ConstraintViolation::getMessage).sorted()
 					.collect(Collectors.joining(","));
 			return Mono.error(new AccountDataException(errorMessage));
@@ -63,14 +94,22 @@ public class AccountsHandler implements IAccountManagementService {
 
 	@Override
 	public Mono<ServerResponse> getAccounts(ServerRequest serverRequest) {
-
 		var accountId = serverRequest.queryParam("accountId");
+
 		if (accountId.isPresent()) {
-			var accounts = accountRepository.findByAccountId(String.valueOf(accountId.get()));
-			return buildServerResponse(accounts);
+			String accountIdValue = accountId.get();
+			log.info("Received query param accountId: " + accountIdValue);
+
+			var accountMono = accountRepository.findByAccountId(accountIdValue);
+
+			return accountMono.flatMap(acc -> {
+				log.info("Found account with name: " + acc.getAccountName());
+				return ServerResponse.ok().bodyValue(acc);
+			}).switchIfEmpty(ServerResponse.status(HttpStatus.NOT_FOUND).bodyValue("Account not found"));
 		} else {
+			log.info("No query param accountId provided, fetching all accounts");
 			var allAccounts = accountRepository.findAll();
-			return buildServerResponse(allAccounts);
+			return ServerResponse.ok().body(allAccounts, AccountRepresentation.class);
 		}
 	}
 
@@ -92,10 +131,11 @@ public class AccountsHandler implements IAccountManagementService {
 
 	@Override
 	public Mono<ServerResponse> updateAccount(ServerRequest serverRequest) {
+		var accountId = serverRequest.pathVariable("accountId");
 		return serverRequest.bodyToMono(AccountRepresentation.class).doOnNext(this::validateConstraints)
 
 				.flatMap(acc -> {
-					return accountRepository.findByAccountId(acc.getAccountId()).flatMap(account -> {
+					return accountRepository.findByAccountId(accountId).flatMap(account -> {
 						account.setAccountName(acc.getAccountName());
 						account.setAccountType(acc.getAccountType());
 						account.setBalance(acc.getBalance());
@@ -114,6 +154,12 @@ public class AccountsHandler implements IAccountManagementService {
 		var accountId = serverRequest.pathVariable("accountId");
 		return accountRepository.findByAccountId(accountId).flatMap(account -> accountRepository.delete(account))
 				.then(ServerResponse.noContent().build());
+	}
+
+	@Override
+	public Mono<ServerResponse> addOffersToAccount(ServerRequest serverRequest) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

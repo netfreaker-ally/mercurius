@@ -3,19 +3,13 @@ server:
 spring:
  application:
   name: account-service
- datasource:
-    url: jdbc:h2:mem:testdb
-    driverClassName: org.h2.Driver
-    username: sa
-    password: ''
- h2:
-    console:
-      enabled: true
- jpa:
-    database-platform: org.hibernate.dialect.H2Dialect
-    hibernate:
-      ddl-auto: update
-    show-sql: true
+ data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: local
+
+ 
 # datasource:
 #    url: jdbc:mysql://sql12.freemysqlhosting.net:3306/sql12712947
 #    driverClassName: com.mysql.cj.jdbc.Driver
@@ -56,11 +50,16 @@ management:
     web:
       exposure:
         include: "*"
-eureka:
-  instance:
-    preferIpAddress: true
-  client:
-    fetchRegistry: true
-    registerWithEureka: true
-    serviceUrl:
-      defaultZone: http://localhost:8761/eureka/
+#eureka:
+#  instance:
+#    preferIpAddress: true
+#  client:
+#    fetchRegistry: true
+#    registerWithEureka: true
+#    serviceUrl:
+#      defaultZone: http://localhost:8761/eureka/
+
+
+logging:
+  level:
+    root: info

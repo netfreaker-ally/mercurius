@@ -1,7 +1,8 @@
 package com.Mercurius.accountservice.entity;
 
 import org.springframework.data.annotation.Id;
-import org.springframework.data.relational.core.mapping.Table;
+import org.springframework.data.mongodb.core.mapping.Document;
+
 
 //import jakarta.persistence.Entity;
 //import jakarta.persistence.GeneratedValue;
@@ -13,7 +14,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Table(name = "product")
+@Document(value  = "product")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
