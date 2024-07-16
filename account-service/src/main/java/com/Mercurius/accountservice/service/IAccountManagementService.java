@@ -21,5 +21,7 @@ public interface IAccountManagementService {
 	Mono<ServerResponse> createOffer(ServerRequest serverRequest);
 
 Mono<ServerResponse> addOffersToAccount(ServerRequest serverRequest);
+Mono<ServerResponse> publishOrderEvent(ServerRequest serverRequest);
+Mono<ServerResponse> subscribeToOrderEvents(ServerRequest serverRequest);
 
 }

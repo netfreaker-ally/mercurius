@@ -63,9 +63,7 @@ public class BridgeServiceImpl implements IBridgeService {
 
 	@Override
 	public ResponseEntity<ResponseDto> createBaseProduct(ProductRepresentation baseProduct) {
-		
-		
-		
+
 		ResponseEntity<ResponseDto> response = productOfferingsClient.createProduct(baseProduct);
 		return response;
 	}
@@ -131,7 +129,7 @@ public class BridgeServiceImpl implements IBridgeService {
 	@Override
 	public BundledProductRepresentation getBundledProductById(String productId) {
 		ResponseEntity<BundledProductRepresentation> response = bundledProductsClient.getBundledProductById(productId);
-	
+
 		if (response.getStatusCode().equals(HttpStatus.OK)) {
 			return response.getBody();
 		} else {
@@ -236,60 +234,56 @@ public class BridgeServiceImpl implements IBridgeService {
 
 		return orderManagementClient.getCart(accString);
 	}
+
 	public OrderItem generateOrderItem(OrderItem orderItem) throws ResourceNotFoundException {
-	    String accountId = orderItem.getAccountId();
-	    System.out.println("accountID:\t"+accountId);
-//	    Set<OfferRepresentation> offers = getUserOffers(accountId);  
-AccountRepresentation accountRepresentation=accountManagementClient.getAccountById(accountId).getBody();
-Set<OfferRepresentation> offers=accountRepresentation.getOffers();
-	  
-	    double maxDiscountPercentage = offers.stream()
-	            .mapToDouble(OfferRepresentation::getDiscountPercentage)
-	            .max()
-	            .orElse(0.0);
+//		String accountId = orderItem.getAccountId();
+//		System.out.println("accountID:\t" + accountId);
+////****	    Set<OfferRepresentation> offers = getUserOffers(accountId);  
+//		AccountRepresentation accountRepresentation = accountManagementClient.getAccountById(accountId).getBody();
+//		Set<OfferRepresentation> offers = accountRepresentation.getOffers();
+//
+//		double maxDiscountPercentage = offers.stream().mapToDouble(OfferRepresentation::getDiscountPercentage).max()
+//				.orElse(0.0);
+//
+//		ProductRepresentation productRepresentation = getBaseProductById(orderItem.getProductId());
+//
+//		if (productRepresentation.getStock() < orderItem.getQuantity()) {
+//			throw new ResourceNotFoundException("Product with ID ", orderItem.getProductId(),
+//					" has insufficient stock. Available: " + productRepresentation.getStock() + ", Requested: "
+//							+ orderItem.getQuantity());
+//		}
+//
+//		productRepresentation.setAvailable(orderItem.getQuantity() == productRepresentation.getStock());
+//		productRepresentation.setStock(productRepresentation.getStock() - orderItem.getQuantity());
+//
+//		productOfferingsClient.updateProduct(productRepresentation);
+//
+//		PriceComponent priceComponent = new PriceComponent();
+//		priceComponent.setSellingPrice(productRepresentation.getPrice());
+//		priceComponent.setShippingCharge(50.0);
+//		priceComponent.setmercuiusDiscount(maxDiscountPercentage);
+//
+//		double totalPrice = priceComponent.getSellingPrice() * (1 - maxDiscountPercentage / 100);
+//		totalPrice = Math.round(totalPrice * 100) / 100.0;
+//		totalPrice += priceComponent.getShippingCharge();
+//
+//		priceComponent.setTotalPrice(totalPrice);
+//		priceComponent.setCustomerPrice(totalPrice);
+//
+//		orderItem.setPriceComponents(priceComponent);
+//
+//		orderItem.setOrderDate(Date.valueOf(LocalDate.now()));
+//		orderItem.setCancellationDate(null);
+//		orderItem.setCancellationReason(null);
+//		orderItem.setCancellationSubReason(null);
+//		orderItem.setStatus(Status.APPROVED);
+//		orderItem.setPaymentType(PaymentType.COD);
+//		orderItem.setCourierReturn(false);
+//		orderItem.setListingId(UUID.randomUUID().toString());
+//		orderItem.setPackageIds(new ArrayList<String>());
+//		orderItem.setReplacement(true);
 
-	    ProductRepresentation productRepresentation = getBaseProductById(orderItem.getProductId());
-	  
-	   
-
-	    if (productRepresentation.getStock() < orderItem.getQuantity()) {
-	        throw new ResourceNotFoundException("Product with ID " , orderItem.getProductId() , " has insufficient stock. Available: " + productRepresentation.getStock() + ", Requested: " + orderItem.getQuantity());
-	    }
-
-	   
-	    productRepresentation.setAvailable(orderItem.getQuantity() == productRepresentation.getStock());
-	    productRepresentation.setStock(productRepresentation.getStock() - orderItem.getQuantity());
- 
-	    productOfferingsClient.updateProduct(productRepresentation);
-
-	    PriceComponent priceComponent = new PriceComponent();
-	    priceComponent.setSellingPrice(productRepresentation.getPrice());
-	    priceComponent.setShippingCharge(50.0);
-	    priceComponent.setmercuiusDiscount(maxDiscountPercentage);
-
-
-	    double totalPrice = priceComponent.getSellingPrice() * (1 - maxDiscountPercentage / 100);
-	    totalPrice = Math.round(totalPrice * 100) / 100.0;
-	    totalPrice+=priceComponent.getShippingCharge();
-
-	    priceComponent.setTotalPrice(totalPrice);
-	    priceComponent.setCustomerPrice(totalPrice);
-
-	    orderItem.setPriceComponents(priceComponent);
-
-	    orderItem.setOrderDate(Date.valueOf(LocalDate.now()));
-	    orderItem.setCancellationDate(null);
-	    orderItem.setCancellationReason(null);
-	    orderItem.setCancellationSubReason(null);
-	    orderItem.setStatus(Status.APPROVED);
-	    orderItem.setPaymentType(PaymentType.COD);
-	    orderItem.setCourierReturn(false);
-	    orderItem.setListingId(UUID.randomUUID().toString());
-	    orderItem.setPackageIds(new ArrayList<String>());
-	    orderItem.setReplacement(true);
-	 
-	    
-	    return orderItem;
+		return orderItem;
 	}
 
 }

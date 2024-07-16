@@ -16,11 +16,7 @@ public class BundledProductsController {
 	@Autowired
 	private IBridgeService bridgeService;
 
-	public BundledProductsController(IBridgeService bridgeService) {
-		super();
-		this.bridgeService = bridgeService;
-	}
-
+	
 	@PostMapping
 	public ResponseEntity<String> createBundledProduct(@RequestBody BundledProductRepresentation bundledProduct) {
 		return ResponseEntity.ok(bridgeService.createBundledProduct(bundledProduct));

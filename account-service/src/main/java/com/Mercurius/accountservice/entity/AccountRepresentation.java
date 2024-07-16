@@ -70,7 +70,7 @@ public class AccountRepresentation {
 //	@ManyToMany(cascade = CascadeType.ALL)
 //
 //	@JoinTable(name = "account_offer", joinColumns = @JoinColumn(name = "account_id"), inverseJoinColumns = @JoinColumn(name = "offer_id"))
-	@DBRef
+//	@DBRef
 	private Set<OfferRepresentation> offers = new HashSet<>();
 
 }

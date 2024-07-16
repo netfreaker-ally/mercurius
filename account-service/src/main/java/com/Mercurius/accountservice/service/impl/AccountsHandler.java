@@ -1,11 +1,11 @@
 package com.Mercurius.accountservice.service.impl;
 
 import java.util.Date;
-
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
@@ -38,11 +38,14 @@ public class AccountsHandler implements IAccountManagementService {
 	@Autowired
 	private OfferRepository offerRepository;
 	Date utilDate = new Date();
+	@Autowired
+	private OrderService orderService;
 
 	@Override
 	public Mono<ServerResponse> createAccount(ServerRequest serverRequest) {
 
 		return serverRequest.bodyToMono(AccountRepresentation.class).flatMap(this::validateAndSaveAccount)
+				.doOnNext(savedAccount -> orderService.getAccountInfoSink().tryEmitNext(savedAccount))
 				.flatMap(savedAccount -> ServerResponse.status(HttpStatus.CREATED).bodyValue(savedAccount));
 	}
 
@@ -132,6 +135,7 @@ public class AccountsHandler implements IAccountManagementService {
 	@Override
 	public Mono<ServerResponse> updateAccount(ServerRequest serverRequest) {
 		var accountId = serverRequest.pathVariable("accountId");
+		
 		return serverRequest.bodyToMono(AccountRepresentation.class).doOnNext(this::validateConstraints)
 
 				.flatMap(acc -> {
@@ -161,5 +165,17 @@ public class AccountsHandler implements IAccountManagementService {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public Mono<ServerResponse> publishOrderEvent(ServerRequest serverRequest) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Mono<ServerResponse> subscribeToOrderEvents(ServerRequest serverRequest) {
+	    return ServerResponse.ok().contentType(MediaType.APPLICATION_NDJSON)
+	            .body(orderService.getAccountInfoSink().asFlux().log(), AccountRepresentation.class);
+	}
+
 
 }

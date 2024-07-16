@@ -26,8 +26,8 @@ public class GlobalExceptionHandlerController implements ErrorWebExceptionHandle
         }
 
         if (ex instanceof CustomerAlreadyExistsException) {
-            log.error("This message from global exception handler");
-            exchange.getResponse().setStatusCode(HttpStatus.BAD_REQUEST);
+            log.error("---------------This message from global exception handler---------------------------------------");
+            exchange.getResponse().setStatusCode(HttpStatus.CONFLICT);
             return exchange.getResponse().writeWith(Mono.just(errorMessage));
         }
 

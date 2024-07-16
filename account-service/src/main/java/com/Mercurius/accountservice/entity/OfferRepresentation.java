@@ -51,7 +51,7 @@ public class OfferRepresentation {
 	  @JsonBackReference
 	  
 //	  @ManyToMany(mappedBy = "offers")
-	  @DBRef
+	 // @DBRef
 	  private Set<AccountRepresentation> accounts = new HashSet<>();;
 	 
 

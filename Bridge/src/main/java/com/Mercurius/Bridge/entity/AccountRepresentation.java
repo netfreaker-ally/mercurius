@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class AccountRepresentation {
 
-	private Long id;
+	private String id;
 
 	private String accountId;
 
@@ -41,6 +41,6 @@ public class AccountRepresentation {
 
 	private String accountName;
 
-	private Set<OfferRepresentation> offers = new HashSet<>();
+//	private Set<OfferRepresentation> offers = new HashSet<>();
 
 }
