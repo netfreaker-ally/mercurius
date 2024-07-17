@@ -5,8 +5,8 @@ server:
  port: 8761
 eureka:
   client:
-    registerWithEureka: true
-    fetchRegistry: true
+    registerWithEureka: false
+    fetchRegistry: false
 management:
   endpoints:
     web:

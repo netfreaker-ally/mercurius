@@ -57,7 +57,7 @@ public class AccountRepresentation {
 	private String employmentStatus;
 
 	private boolean membershipLevel;
-
+	private Set<OfferRepresentation> offers = new HashSet<>();
 	@Override
 	public String toString() {
 		return "AccountRepresentation [id=" + id + ", accountId=" + accountId + ", accountName=" + accountName
@@ -71,6 +71,6 @@ public class AccountRepresentation {
 //
 //	@JoinTable(name = "account_offer", joinColumns = @JoinColumn(name = "account_id"), inverseJoinColumns = @JoinColumn(name = "offer_id"))
 //	@DBRef
-	private Set<OfferRepresentation> offers = new HashSet<>();
+	
 
 }

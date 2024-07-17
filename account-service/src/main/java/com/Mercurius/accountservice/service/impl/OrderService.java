@@ -1,21 +1,16 @@
 package com.Mercurius.accountservice.service.impl;
 
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import com.Mercurius.accountservice.entity.AccountRepresentation;
 
-import reactor.core.publisher.Mono;
 import reactor.core.publisher.Sinks;
 
-@Component
+@Service
 public class OrderService {
+	private final Sinks.Many<AccountRepresentation> accountInfoSink = Sinks.many().replay().latest();
 
-	 private  Sinks.Many<AccountRepresentation> accountInfoSink = Sinks.many().replay().latest();
-
-	    public Sinks.Many<AccountRepresentation> getAccountInfoSink() {
-	        return accountInfoSink;
-	    }
-
-	   
-
+	public Sinks.Many<AccountRepresentation> getAccountInfoSink() {
+		return accountInfoSink;
+	}
 }

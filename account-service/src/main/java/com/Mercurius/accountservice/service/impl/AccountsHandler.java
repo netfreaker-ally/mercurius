@@ -41,12 +41,14 @@ public class AccountsHandler implements IAccountManagementService {
 	@Autowired
 	private OrderService orderService;
 
-	@Override
 	public Mono<ServerResponse> createAccount(ServerRequest serverRequest) {
-
-		return serverRequest.bodyToMono(AccountRepresentation.class).flatMap(this::validateAndSaveAccount)
-				.doOnNext(savedAccount -> orderService.getAccountInfoSink().tryEmitNext(savedAccount))
-				.flatMap(savedAccount -> ServerResponse.status(HttpStatus.CREATED).bodyValue(savedAccount));
+	    return serverRequest.bodyToMono(AccountRepresentation.class)
+	            .flatMap(this::validateAndSaveAccount)
+	            .doOnNext(savedAccount -> {
+	                orderService.getAccountInfoSink().tryEmitNext(savedAccount);
+	                log.info("Emitted AccountRepresentation: {}", savedAccount);
+	            })
+	            .flatMap(savedAccount -> ServerResponse.status(HttpStatus.CREATED).bodyValue(savedAccount));
 	}
 
 	private Mono<AccountRepresentation> validateAndSaveAccount(AccountRepresentation newAccount) {
@@ -135,7 +137,7 @@ public class AccountsHandler implements IAccountManagementService {
 	@Override
 	public Mono<ServerResponse> updateAccount(ServerRequest serverRequest) {
 		var accountId = serverRequest.pathVariable("accountId");
-		
+
 		return serverRequest.bodyToMono(AccountRepresentation.class).doOnNext(this::validateConstraints)
 
 				.flatMap(acc -> {
@@ -173,9 +175,11 @@ public class AccountsHandler implements IAccountManagementService {
 	}
 
 	public Mono<ServerResponse> subscribeToOrderEvents(ServerRequest serverRequest) {
-	    return ServerResponse.ok().contentType(MediaType.APPLICATION_NDJSON)
+	    return ServerResponse.ok()
+	            .contentType(MediaType.APPLICATION_NDJSON)  
 	            .body(orderService.getAccountInfoSink().asFlux().log(), AccountRepresentation.class);
 	}
+
 
 
 }
