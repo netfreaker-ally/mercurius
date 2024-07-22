@@ -1,11 +1,7 @@
 package com.Mercurius.Bridge.entity;
 
-import java.sql.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Date;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,6 +15,8 @@ public class AccountRepresentation {
 
 	private String accountId;
 
+	private String accountName;
+
 	private String accountType;
 
 	private Double balance;
@@ -29,18 +27,15 @@ public class AccountRepresentation {
 
 	private boolean isActive;
 
-	private Integer age;
+	private int age;
 
 	private String location;
 
-	private Double income;
+	private double income;
 
 	private String employmentStatus;
 
 	private boolean membershipLevel;
-
-	private String accountName;
-
 //	private Set<OfferRepresentation> offers = new HashSet<>();
 
 }

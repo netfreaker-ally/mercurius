@@ -1,40 +1,22 @@
+# src/main/resources/application.yml
+
 server:
   port: 8083
+
 spring:
- application:
-  name: account-service
- data:
+  application:
+    name: account-service
+  
+  data:
     mongodb:
       host: localhost
       port: 27017
       database: local
 
- 
-# datasource:
-#    url: jdbc:mysql://sql12.freemysqlhosting.net:3306/sql12712947
-#    driverClassName: com.mysql.cj.jdbc.Driver
-#    username: sql12712947
-#    password: Wygs35Nzqf
-#    hikari:
-#      # Consider these connection pool settings for better performance
-#      poolName: HikariPool
-#      minimumIdle: 5
-#      maximumPoolSize: 10
-#      autoCommit: true
-#      
-# jpa:
-#    database-platform: org.hibernate.dialect.MySQL8Dialect
-#    hibernate:
-#      ddl-auto: update
-#    show-sql: true
- cloud:
+cloud:
   openfeign:
-      circuitbreaker:
-        enabled: true
- 
-
- 
- 
+    circuitbreaker:
+      enabled: true
 
 management:
   health:
@@ -50,6 +32,7 @@ management:
     web:
       exposure:
         include: "*"
+
 eureka:
   instance:
     preferIpAddress: true
@@ -59,7 +42,44 @@ eureka:
     serviceUrl:
       defaultZone: http://localhost:8761/eureka/
 
+logging:
+  level:
+    root: info
+    org:
+     springframework:
+      data:
+       mongodb:
+        core: debug
+    mongodb:
+     driver: debug
+
+---
+spring:
+  application:
+    name: account-service
+  config:
+    activate:
+      on-profile: test
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: local
+
+   
+
+
+eureka:
+  client:
+    enabled: false # Disable Eureka client in test profile
 
 logging:
   level:
     root: info
+    org:
+     springframework:
+      data:
+       mongodb:
+        core: debug
+    mongodb:
+     driver: debug

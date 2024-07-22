@@ -11,8 +11,6 @@ import com.Mercurius.accountservice.service.impl.AccountsHandler;
 
 @Configuration
 public class AccountesRouter {
-//	.POST("/subscribe", accountsHandler::subscribeToOrderEvents)
-//	.POST("/publish", accountsHandler::publishOrderEvent)
 
 	@Bean
 	RouterFunction<ServerResponse> AccountesRoutes(AccountsHandler accountsHandler) {
@@ -22,7 +20,6 @@ public class AccountesRouter {
 						.PUT("/{accountId}", accountsHandler::updateAccount))
 				.GET("/hello", request -> ServerResponse.ok().bodyValue("Hello World"))
 				.POST("/create-offer", accountsHandler::createOffer)
-				.GET("/subscribe", accountsHandler::subscribeToOrderEvents)
-				.build();
+				.GET("/subscribe", accountsHandler::subscribeToOrderEvents).build();
 	}
 }

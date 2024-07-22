@@ -41,6 +41,7 @@ public class AccountsHandler implements IAccountManagementService {
 	@Autowired
 	private OrderService orderService;
 
+
 	public Mono<ServerResponse> createAccount(ServerRequest serverRequest) {
 	    return serverRequest.bodyToMono(AccountRepresentation.class)
 	            .flatMap(this::validateAndSaveAccount)
@@ -48,18 +49,25 @@ public class AccountsHandler implements IAccountManagementService {
 	                orderService.getAccountInfoSink().tryEmitNext(savedAccount);
 	                log.info("Emitted AccountRepresentation: {}", savedAccount);
 	            })
-	            .flatMap(savedAccount -> ServerResponse.status(HttpStatus.CREATED).bodyValue(savedAccount));
+	            .flatMap(savedAccount -> ServerResponse.status(HttpStatus.CREATED).bodyValue(savedAccount))
+	            .onErrorResume(CustomerAlreadyExistsException.class, e -> 
+	                ServerResponse.status(HttpStatus.CONFLICT).bodyValue(e.getMessage()));
 	}
 
 	private Mono<AccountRepresentation> validateAndSaveAccount(AccountRepresentation newAccount) {
-		return validateConstraints(newAccount).then(accountRepository.findByAccountId(newAccount.getAccountId()))
-				.flatMap(existingAccount -> Mono.<AccountRepresentation>error(new CustomerAlreadyExistsException(
-						"Customer already registered with given accountId " + newAccount.getAccountId())))
-				.switchIfEmpty(Mono.defer(() -> {
-					newAccount.setCreatedDate(new java.sql.Date(new java.util.Date().getTime()));
-					return accountRepository.save(newAccount);
-				})).cast(AccountRepresentation.class);
+	    return validateConstraints(newAccount)
+	            .then(accountRepository.findByAccountId(newAccount.getAccountId()))
+	            .flatMap(existingAccount -> Mono.<AccountRepresentation>error(
+	                    new CustomerAlreadyExistsException(
+	                            "Customer already registered with given accountId " + newAccount.getAccountId())))
+	            .switchIfEmpty(Mono.defer(() -> {
+	                newAccount.setCreatedDate(new java.sql.Date(new java.util.Date().getTime()));
+	                return accountRepository.save(newAccount);
+	            }));
 	}
+
+
+	
 
 	@Override
 	public Mono<ServerResponse> createOffer(ServerRequest serverRequest) {
@@ -99,24 +107,26 @@ public class AccountsHandler implements IAccountManagementService {
 
 	@Override
 	public Mono<ServerResponse> getAccounts(ServerRequest serverRequest) {
-		var accountId = serverRequest.queryParam("accountId");
+	    var accountId = serverRequest.queryParam("accountId");
+	 
+	    if (accountId.isPresent()) {
+	        String accountIdValue = accountId.get();
+	        log.info("Received query param accountId: " + accountIdValue);
 
-		if (accountId.isPresent()) {
-			String accountIdValue = accountId.get();
-			log.info("Received query param accountId: " + accountIdValue);
+	        var accountMono = accountRepository.findByAccountId(accountIdValue);
 
-			var accountMono = accountRepository.findByAccountId(accountIdValue);
-
-			return accountMono.flatMap(acc -> {
-				log.info("Found account with name: " + acc.getAccountName());
-				return ServerResponse.ok().bodyValue(acc);
-			}).switchIfEmpty(ServerResponse.status(HttpStatus.NOT_FOUND).bodyValue("Account not found"));
-		} else {
-			log.info("No query param accountId provided, fetching all accounts");
-			var allAccounts = accountRepository.findAll();
-			return ServerResponse.ok().body(allAccounts, AccountRepresentation.class);
-		}
+	        return accountMono.flatMap(acc -> {
+	            log.info("Found account with accountId: " + acc.toString());
+	            return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).bodyValue(acc);
+	        }).switchIfEmpty(ServerResponse.status(HttpStatus.NOT_FOUND).bodyValue("Account not found"));
+	    } else {
+	        log.info("No query param accountId provided, fetching all accounts");
+	        var allAccounts = accountRepository.findAll();
+	      
+	        return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).body(allAccounts, AccountRepresentation.class);
+	    }
 	}
+
 
 	private Mono<ServerResponse> buildServerResponse(Mono<AccountRepresentation> account) {
 		return account.flatMap(acc -> ServerResponse.status(HttpStatus.OK).bodyValue(acc))
