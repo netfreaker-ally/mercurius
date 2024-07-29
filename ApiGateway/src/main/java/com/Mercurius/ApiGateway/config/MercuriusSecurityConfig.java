@@ -1,5 +1,8 @@
 package com.Mercurius.ApiGateway.config;
 
+import java.util.Observable;
+import java.util.Observer;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
@@ -10,11 +13,13 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.ReactiveJwtAuthenticationConverterAdapter;
 import org.springframework.security.web.server.SecurityWebFilterChain;
+
+import reactor.core.publisher.BaseSubscriber;
 import reactor.core.publisher.Mono;
 
 @Configuration
 
-public class MercuriusSecurityConfig {
+public class MercuriusSecurityConfig   {
 	@Bean
 	SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity serverHttpSecurity) {
 		
@@ -36,6 +41,10 @@ public class MercuriusSecurityConfig {
 	    jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(new KeycloakRoleConverter());
 	    return new ReactiveJwtAuthenticationConverterAdapter(jwtAuthenticationConverter);
 	}
+
+
+
+	
 	
 
 
