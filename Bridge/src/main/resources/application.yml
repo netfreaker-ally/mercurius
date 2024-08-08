@@ -5,6 +5,7 @@ spring:
   name: "Bridge"
 management:
   health:
+  
     readiness-state:
       enabled: true
     liveness-state:

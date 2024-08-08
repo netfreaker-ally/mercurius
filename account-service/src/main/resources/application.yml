@@ -13,10 +13,10 @@ spring:
       port: 27017
       database: local
 
-cloud:
-  openfeign:
-    circuitbreaker:
-      enabled: true
+#cloud:
+#  openfeign:
+#    circuitbreaker:
+#      enabled: true
 
 management:
   health:
