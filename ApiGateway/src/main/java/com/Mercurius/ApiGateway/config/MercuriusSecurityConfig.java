@@ -9,6 +9,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
+import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
@@ -22,39 +23,43 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.reactive.CorsConfigurationSource;
 import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 
+import com.Mercurius.ApiGateway.filter.CsrfCheckFilter;
+
+import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
 @Configuration
 @EnableWebFluxSecurity
+@Slf4j
 public class MercuriusSecurityConfig {
 
 	@Bean
 	SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity serverHttpSecurity) {
+	    CookieServerCsrfTokenRepository csrfTokenRepository = CookieServerCsrfTokenRepository.withHttpOnlyFalse();
 
-		serverHttpSecurity.authorizeExchange(exchange -> exchange
-				.pathMatchers(HttpMethod.GET).permitAll()
-				.pathMatchers("/mercurius/accounts/**").hasAnyRole("USER", "ADMIN")
-				.pathMatchers("/mercurius/products/**").hasAnyRole("USER", "ADMIN")
-				.pathMatchers("/mercurius/elibility/**").hasAnyRole("ADMIN")
-				.pathMatchers("/mercurius/bridge/**").hasAnyRole("USER", "ADMIN")
-				.pathMatchers("/mercurius/order/**").hasAnyRole("USER", "ADMIN"))
-			.oauth2ResourceServer(oAuth2ResourceServerSpec -> oAuth2ResourceServerSpec
-				.jwt(jwtSpec -> jwtSpec.jwtAuthenticationConverter(grantedAuthoritiesExtractor())))
-			.exceptionHandling(exceptionHandlingSpec -> exceptionHandlingSpec
-				.accessDeniedHandler((exchange, denied) -> {
-					@SuppressWarnings("unused")
-					Mono<String> email = getUserDetails();
-					// logic to send email as i have a notification i need to create a queue for it
+	    serverHttpSecurity
+	        .authorizeExchange(exchange -> exchange
+	            .pathMatchers(HttpMethod.GET).permitAll() 
+	            .pathMatchers("/mercurius/accounts/**").hasAnyRole("USER", "ADMIN")
+	            .pathMatchers("/mercurius/products/**").hasAnyRole("USER", "ADMIN")
+	            .pathMatchers("/mercurius/eligibility/**").hasAnyRole("ADMIN")
+	            .pathMatchers("/mercurius/bridge/**").hasAnyRole("USER", "ADMIN")
+	            .pathMatchers("/mercurius/order/**").hasAnyRole("USER", "ADMIN"))
+	        .oauth2ResourceServer(oAuth2ResourceServerSpec -> oAuth2ResourceServerSpec
+	            .jwt(jwtSpec -> jwtSpec.jwtAuthenticationConverter(grantedAuthoritiesExtractor())))
+	        .exceptionHandling(exceptionHandlingSpec -> exceptionHandlingSpec
+	            .accessDeniedHandler((exchange, denied) -> {
+	                Mono<String> email = getUserDetails();
+	                log.error("Exception Occurred for this email: {}, Unauthorized: {}", email, denied.getMessage());
+	                exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+	                return exchange.getResponse().setComplete();
+	            }))
+	        .cors(corsCustomizer -> corsCustomizer.configurationSource(corsConfigurationSource()))
+	        .csrf(csrf -> csrf.csrfTokenRequestHandler(new ServerCsrfTokenRequestAttributeHandler())
+	            .csrfTokenRepository(csrfTokenRepository))
+	        .addFilterAfter(new CsrfCheckFilter(), SecurityWebFiltersOrder.CSRF);
 
-					exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
-					return exchange.getResponse().setComplete();
-				}))
-			.cors(corsCustomizer -> corsCustomizer.configurationSource(corsConfigurationSource()))
-			.csrf(csrf -> csrf.csrfTokenRequestHandler(new ServerCsrfTokenRequestAttributeHandler())
-				.csrfTokenRepository(CookieServerCsrfTokenRepository.withHttpOnlyFalse()))
-			.logout(customizer -> customizer.logoutUrl("/home"));
-
-		return serverHttpSecurity.build();
+	    return serverHttpSecurity.build();
 	}
 
 	@Bean
@@ -65,7 +70,7 @@ public class MercuriusSecurityConfig {
 		config.setAllowCredentials(true);
 		config.setAllowedHeaders(Collections.singletonList("*"));
 		config.setMaxAge(3600L);
-
+//		config.addExposedHeader("Set-Cookie");
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		source.registerCorsConfiguration("/**", config);
 
@@ -91,50 +96,5 @@ public class MercuriusSecurityConfig {
 			return "UserUnknown";
 		});
 	}
-
-	
-
-
-//	@Bean
-//	SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
-//		CsrfTokenRequestAttributeHandler requestHandler = new CsrfTokenRequestAttributeHandler();
-//		requestHandler.setCsrfRequestAttributeName("_csrf");
-//		http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-//				.cors(corsCustomizer -> corsCustomizer.configurationSource(new CorsConfigurationSource() {
-//
-//					@Override
-//					public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
-//						CorsConfiguration config = new CorsConfiguration();
-//						config.setAllowedOrigins(Collections.singletonList("http://localhost:4200"));
-//						config.setAllowedMethods(Collections.singletonList("*"));
-//						config.setAllowCredentials(true);
-//						config.setAllowedHeaders(Collections.singletonList("*"));
-//						config.setExposedHeaders(Arrays.asList("Authorization"));
-//						config.setMaxAge(3600L);
-//						return config;
-//					}
-//				}))
-//				.csrf((csrf) -> csrf.csrfTokenRequestHandler(new ServerCsrfTokenRequestAttributeHandler())
-//						
-//						.ignoringRequestMatchers("/contact", "/register")
-//						.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
-////				.addFilterAfter(new CsrfCookieFilter(), BasicAuthenticationFilter.class)
-////				.addFilterBefore(new RequestValidationBeforeFilter(), BasicAuthenticationFilter.class)
-////				.addFilterAt(new AuthoritiesLoggingAtFilter(), BasicAuthenticationFilter.class)
-////				.addFilterAfter(new AuthoritiesLoggingAfterFilter(), BasicAuthenticationFilter.class)
-////				.addFilterAfter(new JWTTokenGeneratorFilter(), BasicAuthenticationFilter.class)
-////				.addFilterBefore(new JWTTokenValidatorFilter(), BasicAuthenticationFilter.class)
-//				.authorizeHttpRequests((requests) -> requests.requestMatchers("/myAccount").hasRole("USER")
-//						.requestMatchers("/myBalance").hasAnyRole("USER", "ADMIN").requestMatchers("/myLoans")
-//						.authenticated().requestMatchers("/myCards").hasRole("USER").requestMatchers("/user")
-//						.authenticated().requestMatchers("/notices", "/contact", "/register").permitAll())
-////				.formLogin(Customizer.withDefaults()).httpBasic(Customizer.withDefaults());
-//		return http.build();
-//	}
-//
-//	@Bean
-//	public PasswordEncoder passwordEncoder() {
-//		return new BCryptPasswordEncoder();
-//	}
 
 }

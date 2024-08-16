@@ -22,37 +22,53 @@ public class ApiGatewayApplication {
 
 	@Bean
 	RouteLocator eazyBankRouteConfig(RouteLocatorBuilder routeLocatorBuilder) {
-		return routeLocatorBuilder.routes().route("accounts", p -> p.path("/mercurius/accounts/**").filters(f -> f
-				.rewritePath("/mercurius/accounts/(?<segment>.*)", "/${segment}")
-				.addResponseHeader("X-Response-Time", LocalDateTime.now().toString())
-				.addResponseHeader("Responsible", "NetFreaker").circuitBreaker(
-						config -> config.setName("accountsserviceCircuitBreaker").setFallbackUri("forward:/Support"))
+		return routeLocatorBuilder.routes()
+				.route("accounts", p -> p.path("/mercurius/accounts/**").and().cookie("cookie1", "cook123")
+						.filters(f -> f.rewritePath("/mercurius/accounts/(?<segment>.*)", "/${segment}")
+								.addResponseHeader("X-Response-Time", LocalDateTime.now().toString())
+								.addResponseHeader("Responsible", "NetFreaker").circuitBreaker(config -> config
+										.setName("accountsserviceCircuitBreaker").setFallbackUri("forward:/Support"))
 
-		).uri("http://localhost:8083/"))
-				.route("products",
-						p -> p.path("/mercurius/products/**")
-								.filters(f -> f.rewritePath("/mercurius/products/(?<segment>.*)", "/${segment}")
-										.addResponseHeader("X-Response-Time", LocalDateTime.now().toString())
-										.addResponseHeader("Responsible", "Hanuma")
-										.retry(retryConfig -> retryConfig.setRetries(3).setMethods(HttpMethod.GET)
-												.setBackoff(Duration.ofMillis(100), Duration.ofMillis(1000), 2, true)
+						).uri("lb://ACCOUNT-SERVICE"))
+//				.route("products",
+//						p -> p.path("/mercurius/products/**").and().cookie("cookie1", "cook123")
+//								.filters(f -> f.rewritePath("/mercurius/products/(?<segment>.*)", "/${segment}")
+//										.addResponseHeader("X-Response-Time", LocalDateTime.now().toString())
+//										.addResponseHeader("Responsible", "Hanuma")
+//										.retry(retryConfig -> retryConfig.setRetries(3).setMethods(HttpMethod.GET)
+//												.setBackoff(Duration.ofMillis(100), Duration.ofMillis(1000), 2, true)
+//
+//										))
+//
+//								.uri("lb://PRODUCT-SERVICE"))
+				.route("products", p -> p
+					    .path("/mercurius/products/**")
+					    .filters(f -> f.rewritePath("/mercurius/products/(?<segment>.*)", "/${segment}")
+					        .addResponseHeader("X-Response-Time", LocalDateTime.now().toString())
+					        .addResponseHeader("Responsible", "Hanuma")
+					        .retry(retryConfig -> retryConfig.setRetries(3)
+					            .setMethods(HttpMethod.GET)
+					            .setBackoff(Duration.ofMillis(100), Duration.ofMillis(1000), 2, true)))
+					    .uri("lb://PRODUCT-SERVICE"))
 
-										)).uri("http://localhost:8084/"))
+
 				.route("eligibility-service", p -> p.path("/mercurius/eligibility-service/**").filters(f -> f
 						.rewritePath("/mercurius/eligibility-service/(?<segment>.*)", "/${segment}")
 						.addResponseHeader("X-Response-Time", LocalDateTime.now().toString())
 						.addResponseHeader("Responsible", "Hanuma Ramavath").circuitBreaker(config -> config
 								.setName("eligibility-serviceCircuitBreaker").setFallbackUri("forward:/Support")))
-						.uri("http://localhost:8085/")
+						.uri("lb://ELIGIBILITY-SERVICE")
 
 				)
-				.route("bridge", p -> p.path("/mercurius/bridge/**")
-						.filters(f -> f.rewritePath("/mercurius/bridge/(?<segment>.*)", "/${segment}")
-								.addResponseHeader("X-Response-Time", LocalDateTime.now().toString())
-								.addResponseHeader("Responsible", "Hanuma Ramavath").circuitBreaker(config -> config
-										.setName("bridgeCircuitBreaker").setFallbackUri("forward:/Support")))
-						.uri("http://localhost:8082/")
-//						.uri("/lb://bridge")
+				.route("bridge",
+						p -> p.path("/mercurius/bridge/**")
+								.filters(f -> f.rewritePath("/mercurius/bridge/(?<segment>.*)", "/${segment}")
+										.addResponseHeader("X-Response-Time", LocalDateTime.now().toString())
+										.addResponseHeader("Responsible", "Hanuma Ramavath")
+										.circuitBreaker(config -> config.setName("bridgeCircuitBreaker")
+												.setFallbackUri("forward:/Support")))
+								// .uri("http://localhost:8082/")
+								.uri("lb://BRIDGE")
 
 				).route("order", p -> {
 
@@ -64,7 +80,7 @@ public class ApiGatewayApplication {
 									.circuitBreaker(config -> config.setName("orderCircuitBreaker")
 											.setFallbackUri("forward:/Support")))
 
-							.uri("http://localhost:9092/");
+							.uri("lb://ORDER");
 				}
 
 				).route("example_route", r -> r.path("/api/**")
