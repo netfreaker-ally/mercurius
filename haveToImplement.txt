@@ -1,0 +1,20 @@
+Authentication with Keycloak:
+
+Keycloak is responsible for authenticating users. This means users will log in through Keycloak, which will issue access tokens (usually JWTs) after successful authentication.
+Keycloak will manage user login, registration, and identity management. It issues tokens that are then used to access protected resources.
+Authorization with OAuth2 Resource Server:
+
+Spring Cloud Gateway acts as an OAuth2 Resource Server. It validates the tokens issued by Keycloak to authorize access to the requested resources.
+The gateway will inspect the incoming requests for valid tokens and check if the user has the appropriate roles or permissions to access the resources based on the claims in the token.
+How It Works Together:
+User Authentication:
+
+Users are redirected to Keycloak for login.
+After successful authentication, Keycloak redirects back to your application with an access token.
+Access Token Validation:
+
+The access token from Keycloak is sent with requests to your Spring Cloud Gateway.
+The gateway’s OAuth2 Resource Server configuration will validate this token. It ensures the token is valid, not expired, and issued by a trusted authorization server (Keycloak).
+Authorization:
+
+Based on the token’s claims (such as user roles or permissions), Spring Cloud Gateway enforces access controls. It routes the requests to appropriate backend services if the user is authorized.

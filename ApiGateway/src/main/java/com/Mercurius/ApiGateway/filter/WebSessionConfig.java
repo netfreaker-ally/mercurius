@@ -29,7 +29,7 @@ public class WebSessionConfig {
 								if (existingSessionId != null && !existingSessionId.equals(currentSessionId)) {
 									return exchange.getSession().flatMap(session -> {
 										session.invalidate();
-										return chain.filter(exchange);
+										return chain.filter(exchange); 
 									});
 								}
 

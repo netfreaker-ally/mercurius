@@ -34,12 +34,6 @@ public class KeycloakClientService implements IkeycloakService {
 	@Autowired
 	private final RestTemplate restTemplate;
 
-	public KeycloakClientService(KeyCloakConfiguration keyCloakConfiguration, RestTemplate restTemplate) {
-		super();
-		this.keyCloakConfiguration = keyCloakConfiguration;
-		this.restTemplate = restTemplate;
-	}
-
 	@Override
 	public String getAdminAccessToken() {
 		// TODO Auto-generated method stub
@@ -109,7 +103,7 @@ public class KeycloakClientService implements IkeycloakService {
 		HttpEntity<ClientRepresentation> entity = (HttpEntity<ClientRepresentation>) responseMap.get("entity");
 		HttpHeaders httpHeaders = (HttpHeaders) responseMap.get("httpHeaders");
 		String clientEndpoint = (String) responseMap.get("clientEndpoint");
-		
+
 		boolean isDeleted = false;
 		ResponseEntity<String> response = restTemplate.exchange(clientEndpoint, HttpMethod.DELETE, entity,
 				String.class);
@@ -174,23 +168,23 @@ public class KeycloakClientService implements IkeycloakService {
 
 	@Override
 	public ResponseEntity<String> registerUser() {
-		UserRepresentation user =new UserRepresentation();
-	    user.setUsername("john.doe");
-	    user.setFirstName("John");
-	    user.setLastName("Doe");
-	    user.setEmail("john.doe@example.com");
-	    user.setEnabled(true);
-	    user.setEmailVerified(true);
-	 
-	    HttpHeaders headers = new HttpHeaders();
-	    String accessToken=getAdminAccessToken();
+		UserRepresentation user = new UserRepresentation();
+		user.setUsername("john.doe");
+		user.setFirstName("John");
+		user.setLastName("Doe");
+		user.setEmail("john.doe@example.com");
+		user.setEnabled(true);
+		user.setEmailVerified(true);
+
+		HttpHeaders headers = new HttpHeaders();
+		String accessToken = getAdminAccessToken();
 		headers.setBearerAuth(accessToken);
 		headers.setContentType(MediaType.APPLICATION_JSON);
-	
+
 		HttpEntity<UserRepresentation> entity = new HttpEntity<>(user, headers);
 		String clientEndpoint = "http://localhost:8080/admin/realms/master/users";
 		return restTemplate.postForEntity(clientEndpoint, entity, String.class);
-		
+
 	}
 
 }
