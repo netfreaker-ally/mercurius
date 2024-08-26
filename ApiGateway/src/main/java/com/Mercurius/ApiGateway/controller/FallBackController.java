@@ -1,16 +1,14 @@
 package com.Mercurius.ApiGateway.controller;
 
-
-
-import org.springframework.http.server.reactive.ServerHttpResponse;
-import org.springframework.security.web.server.csrf.CsrfToken;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.security.oauth2.core.OAuth2AuthenticatedPrincipal;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ServerWebExchange;
-
+//import org.springframework.security.oauth2.client.OAuth2RestTemplate
 import lombok.extern.slf4j.Slf4j;
-import reactor.core.publisher.Mono;
 
 @RestController
 @Slf4j
@@ -19,7 +17,8 @@ public class FallBackController {
 	public String fallbackmethod() {
 		return "An Error occured in gateway server";
 	}
-	@RequestMapping("/home")
+
+	@GetMapping("/home")
 	public String home() {
 		return "Welcome To Home";
 	}
@@ -34,7 +33,5 @@ public class FallBackController {
 //	        return Mono.just("CSRF token not available");
 //	    }
 //	}
-
-
 
 }

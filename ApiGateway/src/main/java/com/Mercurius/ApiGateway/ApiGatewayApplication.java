@@ -25,6 +25,8 @@ public class ApiGatewayApplication {
 		return routeLocatorBuilder.routes()
 				.route("accounts", p -> p.path("/mercurius/accounts/**").and().cookie("cookie1", "cook123")
 						.filters(f -> f.rewritePath("/mercurius/accounts/(?<segment>.*)", "/${segment}")
+								.removeRequestHeader("Cookie")
+								.addRequestHeader("Authorization", "Bearer {access_token}")
 								.addResponseHeader("X-Response-Time", LocalDateTime.now().toString())
 								.addResponseHeader("Responsible", "NetFreaker").circuitBreaker(config -> config
 										.setName("accountsserviceCircuitBreaker").setFallbackUri("forward:/Support"))

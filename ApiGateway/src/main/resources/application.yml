@@ -1,13 +1,39 @@
 spring:
  application:
   name: ApiGateway
+  keycloak:
+   logout-url: http://localhost:8080/realms/master/protocol/openid-connect/logout
+ 
  security:
     oauth2:
       resourceserver:
         jwt:
-          jwk-set-uri: "http://localhost:8420/realms/master/protocol/openid-connect/certs"
+          jwk-set-uri: "http://localhost:8080/realms/master/protocol/openid-connect/certs"
+      client:
+       registration:
+          keycloak:
+            client-id: APIGateway  
+            client-secret: COvsLjbXUWgWH2UXFanPDMXTQmIqmH9y
+            authorization-grant-type: authorization_code
+            scope: "openid profile email admin"
+            redirect-uri: "http://localhost:9000/login/oauth2/code/keycloak"  
+       provider:  
+        keycloak:
+            authorization-uri: http://localhost:8080/realms/master/protocol/openid-connect/auth
+            token-uri: http://localhost:8080/realms/master/protocol/openid-connect/token
+            user-info-uri: http://localhost:8080/realms/master/protocol/openid-connect/userinfo
+            jwk-set-uri: http://localhost:8080/realms/master/protocol/openid-connect/certs
+            issuer-uri: http://localhost:8080/realms/master
+            user-name-attribute: preferred_username
+ 
+
+         
+       
  cloud:    
     gateway:
+      default-filters:
+      - TokenRelay
+      
       discovery:
         locator:
           enabled: true
@@ -47,7 +73,9 @@ logging:
   level:
     org:
       springframework:
+        security: DEBUG
         cloud:
           gateway: TRACE
-        web: TRACE
+        web: DEBUG
+
 
