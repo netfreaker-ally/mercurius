@@ -1,5 +1,6 @@
 package com.Mercurius.ApiGateway.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
@@ -16,13 +17,10 @@ import reactor.core.publisher.Mono;
 @Slf4j
 
 public class KeycloakLogoutHandler implements ServerLogoutHandler {
-	private final WebClient webClient;
-	@Value("${keycloak.logout-url}")
-	private String keycloakLogoutUrl;
+	@Autowired
+	private WebClient webClient;
 
-	public KeycloakLogoutHandler(WebClient webClient) {
-		this.webClient = webClient;
-	}
+	private static final String keycloakLogoutUrl = "http://localhost:8080/realms/master/protocol/openid-connect/logout";
 
 	@Override
 	public Mono<Void> logout(WebFilterExchange exchange, Authentication authentication) {

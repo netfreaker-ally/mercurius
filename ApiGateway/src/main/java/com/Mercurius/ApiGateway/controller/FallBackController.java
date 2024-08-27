@@ -1,21 +1,50 @@
 package com.Mercurius.ApiGateway.controller;
 
-import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
-import org.springframework.security.oauth2.core.OAuth2AuthenticatedPrincipal;
-import org.springframework.security.oauth2.core.oidc.user.OidcUser;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.server.context.WebSessionServerSecurityContextRepository;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
 //import org.springframework.security.oauth2.client.OAuth2RestTemplate
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @Slf4j
 public class FallBackController {
-	@RequestMapping("/Support")
+	@Autowired
+	public WebSessionServerSecurityContextRepository webSessionServerSecurityContextRepository;
+
+	@GetMapping("/")
+	public String test() {
+	    return "redirect:/home";
+	}
+
+	@GetMapping("/Support")
 	public String fallbackmethod() {
 		return "An Error occured in gateway server";
+	}
+
+	@GetMapping("/accounts")
+	public String accountsFallbackMethod() {
+		return "An Error occured in accounts -ApiGateway";
+	}
+
+	@GetMapping("/eligibility-service")
+	public String eligibilityserviceFallbackMethod() {
+		return "An Error occured in eligibility-service -ApiGateway";
+	}
+
+	@GetMapping("/order")
+	public String ordertsFallbackMethod() {
+		return "An Error occured in order -ApiGateway";
+	}
+
+	@GetMapping("/allServices")
+	private String allservices() {
+		// TODO Auto-generated method stub
+		return "SuccessFully Logged In /n You can access our all Services now";
 	}
 
 	@GetMapping("/home")

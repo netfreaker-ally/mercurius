@@ -1,6 +1,7 @@
 package com.Mercurius.ApiGateway.config;
 
 import java.util.Collections;
+import java.util.List;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,13 +16,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.client.registration.ClientRegistration;
-import org.springframework.security.oauth2.client.registration.InMemoryReactiveClientRegistrationRepository;
+import org.springframework.security.oauth2.client.oidc.web.server.logout.OidcClientInitiatedServerLogoutSuccessHandler;
 import org.springframework.security.oauth2.client.registration.ReactiveClientRegistrationRepository;
 import org.springframework.security.oauth2.client.web.server.ServerOAuth2AuthorizedClientRepository;
 import org.springframework.security.oauth2.client.web.server.WebSessionServerOAuth2AuthorizedClientRepository;
-import org.springframework.security.oauth2.core.AuthorizationGrantType;
-import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.NimbusReactiveJwtDecoder;
 import org.springframework.security.oauth2.jwt.ReactiveJwtDecoder;
@@ -30,10 +28,11 @@ import org.springframework.security.oauth2.server.resource.authentication.Reacti
 import org.springframework.security.oauth2.server.resource.web.access.server.BearerTokenServerAccessDeniedHandler;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.authentication.logout.DelegatingServerLogoutHandler;
-import org.springframework.security.web.server.authentication.logout.HttpStatusReturningServerLogoutSuccessHandler;
+import org.springframework.security.web.server.authentication.logout.RedirectServerLogoutSuccessHandler;
 import org.springframework.security.web.server.authentication.logout.SecurityContextServerLogoutHandler;
+import org.springframework.security.web.server.authentication.logout.ServerLogoutSuccessHandler;
 import org.springframework.security.web.server.authentication.logout.WebSessionServerLogoutHandler;
-import org.springframework.security.web.server.context.WebSessionServerSecurityContextRepository;
+import org.springframework.security.web.server.context.NoOpServerSecurityContextRepository;
 import org.springframework.security.web.server.csrf.CookieServerCsrfTokenRepository;
 import org.springframework.security.web.server.csrf.CsrfServerLogoutHandler;
 import org.springframework.security.web.server.csrf.ServerCsrfTokenRequestAttributeHandler;
@@ -44,6 +43,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import com.Mercurius.ApiGateway.filter.CsrfCheckFilter;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
@@ -52,32 +52,33 @@ import reactor.core.publisher.Mono;
 @Slf4j
 
 public class MercuriusSecurityConfig {
+	//InMemoryReactiveClientRegistrationRepository 
 
-	private final KeycloakLogoutHandler keycloakLogoutHandler;
+	public MercuriusSecurityConfig() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	private KeycloakLogoutHandler keycloakLogoutHandler;
+//	private ReactiveClientRegistrationRepository clientRegistrationRepository;
+
+//	public MercuriusSecurityConfig(ReactiveClientRegistrationRepository clientRegistrationRepository) {
+//		this.clientRegistrationRepository = clientRegistrationRepository;
+//	}
 
 	public MercuriusSecurityConfig(KeycloakLogoutHandler keycloakLogoutHandler) {
 		this.keycloakLogoutHandler = keycloakLogoutHandler;
 	}
 
-	/* private final KeycloakLogoutHandler keycloakLogoutHandler; */
-	ClientRegistration clientRegistration = ClientRegistration.withRegistrationId("keycloak").clientId("APIGateway")
-			.clientSecret("COvsLjbXUWgWH2UXFanPDMXTQmIqmH9y")
-			.authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
-			.redirectUri("http://localhost:9000/login/oauth2/code/keycloak").scope("openid")
-			.authorizationUri("http://localhost:8080/realms/master/protocol/openid-connect/auth")
-			.tokenUri("http://localhost:8080/realms/master/protocol/openid-connect/token")
-			.userInfoUri("http://localhost:8080/realms/master/protocol/openid-connect/userinfo")
-			.jwkSetUri("http://localhost:8080/realms/master/protocol/openid-connect/certs")
-			.issuerUri("http://localhost:8080/realms/master").userNameAttributeName("preferred_username")
-			.clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC).build();
+//	public ServerLogoutSuccessHandler createLogoutSuccessHandler() {
+//		OidcClientInitiatedServerLogoutSuccessHandler logoutSuccessHandler = new OidcClientInitiatedServerLogoutSuccessHandler(
+//				clientRegistrationRepository);
+//		// You can configure additional properties if needed
+//		return logoutSuccessHandler;
+//	}
 
 	@Bean
-	ReactiveClientRegistrationRepository clientRegistrationRepository() {
-		return new InMemoryReactiveClientRegistrationRepository(clientRegistration);
-	}
-
-	@Bean
-	public ReactiveJwtDecoder jwtDecoder() {
+	ReactiveJwtDecoder jwtDecoder() {
 		String jwkSetUri = "http://localhost:8080/realms/master/protocol/openid-connect/certs";
 		return NimbusReactiveJwtDecoder.withJwkSetUri(jwkSetUri).build();
 	}
@@ -102,8 +103,10 @@ public class MercuriusSecurityConfig {
 				// TODO Auto-generated method stub
 				DelegatingServerLogoutHandler delegatingServerLogoutHandler = new DelegatingServerLogoutHandler(
 						new SecurityContextServerLogoutHandler(), new CsrfServerLogoutHandler(csrfTokenRepository),
-						new WebSessionServerLogoutHandler(), keycloakLogoutHandler);
-				t.logoutUrl("/logout").logoutSuccessHandler(new HttpStatusReturningServerLogoutSuccessHandler())
+						new WebSessionServerLogoutHandler());
+				t.logoutUrl("/logout").logoutSuccessHandler(new RedirectServerLogoutSuccessHandler())
+					//	.logoutSuccessHandler(createLogoutSuccessHandler()
+							//	)
 
 						.logoutHandler(delegatingServerLogoutHandler);
 
@@ -118,19 +121,16 @@ public class MercuriusSecurityConfig {
 		serverHttpSecurity
 
 				// Statefull session management for browser-based OAuth2 login
-				.securityContextRepository(new WebSessionServerSecurityContextRepository())
+				// .securityContextRepository(new WebSessionServerSecurityContextRepository())
+				// for stateless
+				.securityContextRepository(NoOpServerSecurityContextRepository.getInstance())
 
-				// Authorize specific URL patterns
 				.authorizeExchange(exchange -> exchange.pathMatchers("/mercurius/accounts/**")
-						.hasAnyRole("USER", "ADMIN").pathMatchers("/mercurius/products/**").authenticated() // Authenticated
-																											// users
-																											// will
-																											// trigger
-																											// OAuth2
-																											// login
-						.pathMatchers("/mercurius/eligibility/**").hasAnyRole("ADMIN")
-						.pathMatchers("/mercurius/bridge/**").hasAnyRole("USER", "ADMIN")
-						.pathMatchers("/mercurius/order/**").hasAnyRole("USER", "ADMIN"))
+						.hasAuthority("SCOPE_admin").pathMatchers("/mercurius/products/**").authenticated()
+						.pathMatchers("/mercurius/eligibility/**").hasAuthority("SCOPE_admin")
+						.pathMatchers("/mercurius/bridge/**").hasAuthority("OIDC_USER")
+						.pathMatchers("/mercurius/order/**").hasAnyAuthority("SCOPE_admin", "OIDC_USER").anyExchange()
+						.permitAll())
 
 				// OAuth2 Resource Server JWT handling
 				.oauth2ResourceServer(oAuth2ResourceServerSpec -> oAuth2ResourceServerSpec
@@ -141,18 +141,16 @@ public class MercuriusSecurityConfig {
 
 				// Exception handling
 				.exceptionHandling(exceptionHandling -> exceptionHandling
-//            .authenticationEntryPoint(new RedirectServerAuthenticationEntryPoint("/login"))
+						// .authenticationEntryPoint(new
+						// RedirectServerAuthenticationEntryPoint("/login"))
 						.accessDeniedHandler(new BearerTokenServerAccessDeniedHandler()))
 
-				// Enable CORS and CSRF
 				.cors(corsCustomizer -> corsCustomizer.configurationSource(corsConfigurationSource()))
 				.csrf(csrf -> csrf.csrfTokenRequestHandler(new ServerCsrfTokenRequestAttributeHandler())
 						.csrfTokenRepository(csrfTokenRepository))
 
-				// Custom CSRF check filter
 				.addFilterAfter(new CsrfCheckFilter(), SecurityWebFiltersOrder.CSRF)
 
-				// Logout configuration
 				.logout(logCustomizer);
 
 		return serverHttpSecurity.build();
@@ -161,8 +159,9 @@ public class MercuriusSecurityConfig {
 
 	@Bean
 	CorsConfigurationSource corsConfigurationSource() {
+		List<String> allowedorigins = List.of("http://mercurius/*", "http://localhost/*", "null");
 		CorsConfiguration config = new CorsConfiguration();
-		config.setAllowedOrigins(Collections.singletonList("http://mercurius"));
+		config.setAllowedOrigins(allowedorigins);
 		config.setAllowedMethods(Collections.singletonList("*"));
 		config.setAllowCredentials(true);
 		config.setAllowedHeaders(Collections.singletonList("*"));
@@ -200,34 +199,3 @@ public class MercuriusSecurityConfig {
 	}
 
 }
-
-//serverHttpSecurity
-//
-//		.securityContextRepository(new WebSessionServerSecurityContextRepository())// default used by security
-//																					// for statefull for
-//		// .pathMatchers(HttpMethod.GET).permitAll() // stateless i need to use
-//		// NoOpServerSecurityContextRepository
-//		
-//		.authorizeExchange(exchange -> exchange.pathMatchers("/mercurius/accounts/**")
-//				.hasAnyRole("USER", "ADMIN").pathMatchers("/mercurius/products/**").authenticated()
-//				.pathMatchers("/mercurius/eligibility/**").hasAnyRole("ADMIN")
-//				.pathMatchers("/mercurius/bridge/**").hasAnyRole("USER", "ADMIN")
-//				.pathMatchers("/mercurius/order/**").hasAnyRole("USER", "ADMIN"))
-//		.oauth2ResourceServer(oAuth2ResourceServerSpec -> oAuth2ResourceServerSpec
-//				.jwt(jwtSpec -> jwtSpec.jwtAuthenticationConverter(grantedAuthoritiesExtractor())))
-////		.oauth2Client(
-////				(oauth2Client) -> oauth2Client
-////				.clientRegistrationRepository(clientRegistrationRepository())
-////				.authorizedClientRepository(authorizedClientRepository())
-////
-////		)
-//		.oauth2Login(Customizer.withDefaults()).exceptionHandling(exceptionHandling -> exceptionHandling
-//
-//				.authenticationEntryPoint(new HttpBasicServerAuthenticationEntryPoint())
-//				.accessDeniedHandler(new BearerTokenServerAccessDeniedHandler()))
-//		.cors(corsCustomizer -> corsCustomizer.configurationSource(corsConfigurationSource()))
-//		.csrf(csrf -> csrf.csrfTokenRequestHandler(new ServerCsrfTokenRequestAttributeHandler())
-//				.csrfTokenRepository(csrfTokenRepository))
-//		.addFilterAfter(new CsrfCheckFilter(), SecurityWebFiltersOrder.CSRF).logout(logCustomizer);
-//
-//return serverHttpSecurity.build();

@@ -1,8 +1,7 @@
 spring:
  application:
   name: ApiGateway
-  keycloak:
-   logout-url: http://localhost:8080/realms/master/protocol/openid-connect/logout
+
  
  security:
     oauth2:
@@ -15,7 +14,7 @@ spring:
             client-id: APIGateway  
             client-secret: COvsLjbXUWgWH2UXFanPDMXTQmIqmH9y
             authorization-grant-type: authorization_code
-            scope: "openid profile email admin"
+            scope: "openid"
             redirect-uri: "http://localhost:9000/login/oauth2/code/keycloak"  
        provider:  
         keycloak:
