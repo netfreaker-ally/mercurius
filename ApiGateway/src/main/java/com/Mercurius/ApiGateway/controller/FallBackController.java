@@ -1,12 +1,15 @@
 package com.Mercurius.ApiGateway.controller;
 
+import java.net.URI;
+import java.net.http.HttpClient.Redirect;
+
+import org.apache.http.impl.client.RedirectLocations;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.server.context.WebSessionServerSecurityContextRepository;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.v3.oas.annotations.media.Schema.RequiredMode;
 //import org.springframework.security.oauth2.client.OAuth2RestTemplate
 import lombok.extern.slf4j.Slf4j;
 
@@ -18,7 +21,10 @@ public class FallBackController {
 
 	@GetMapping("/")
 	public String test() {
-	    return "redirect:/home";
+		log.error("----------Logged In SuccessFully--------------");
+		URI redirectUri=URI.create("redirect:http://localhost:1312/services");
+	
+		return "redirect:http://localhost:1312/services";
 	}
 
 	@GetMapping("/Support")
@@ -39,6 +45,11 @@ public class FallBackController {
 	@GetMapping("/order")
 	public String ordertsFallbackMethod() {
 		return "An Error occured in order -ApiGateway";
+	}
+
+	@GetMapping("/product")
+	public String productFallbackMethod() {
+		return "An Error occured in product -ApiGateway";
 	}
 
 	@GetMapping("/allServices")

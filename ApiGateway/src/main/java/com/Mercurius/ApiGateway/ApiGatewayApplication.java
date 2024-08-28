@@ -2,7 +2,6 @@ package com.Mercurius.ApiGateway;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -12,12 +11,20 @@ import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
 
+import com.Mercurius.ApiGateway.filter.CustomRedirectFilter;
+
 @SpringBootApplication
 @EnableDiscoveryClient
 public class ApiGatewayApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(ApiGatewayApplication.class, args);
+	}
+
+	private CustomRedirectFilter customRedirectFilter;
+
+	public ApiGatewayApplication(CustomRedirectFilter customRedirectFilter) {
+		this.customRedirectFilter = customRedirectFilter;
 	}
 
 	@Bean
@@ -36,7 +43,10 @@ public class ApiGatewayApplication {
 								.filters(f -> f.rewritePath("/mercurius/products/(?<segment>.*)", "/${segment}")
 										.addResponseHeader("X-Response-Time", LocalDateTime.now().toString())
 										.addResponseHeader("Responsible", "Hanuma")
+										.circuitBreaker(config -> config.setName("products-serviceCircuitBreaker")
+												.setFallbackUri("forward:/product"))
 										.retry(retryConfig -> retryConfig.setRetries(3).setMethods(HttpMethod.GET)
+												
 												.setBackoff(Duration.ofMillis(100), Duration.ofMillis(1000), 2, true)))
 								.uri("lb://PRODUCT-SERVICE"))
 
@@ -68,15 +78,7 @@ public class ApiGatewayApplication {
 							.uri("lb://ORDER");
 				}
 
-				).route("example_route", r -> r.path("/api/**")
-
-						.and().method("GET").and().header("X-Custom-Header", "Value").and().host("example.com").and()
-						.remoteAddr("192.168.1.100").and().query("param1", "value1").and()
-						.before(ZonedDateTime.parse("2024-12-31T23:59:59Z")).and()
-						.after(ZonedDateTime.parse("2024-01-01T00:00:00Z")).and().cookie("sessionId", "123456").and()
-
-						.uri("http://example.com"))
-				.build();
+				).build();
 
 	}
 }

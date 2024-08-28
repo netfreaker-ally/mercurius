@@ -1,5 +1,6 @@
 package com.Mercurius.ApiGateway.config;
 
+import java.net.URI;
 import java.util.Collections;
 import java.util.List;
 
@@ -16,8 +17,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.client.oidc.web.server.logout.OidcClientInitiatedServerLogoutSuccessHandler;
-import org.springframework.security.oauth2.client.registration.ReactiveClientRegistrationRepository;
 import org.springframework.security.oauth2.client.web.server.ServerOAuth2AuthorizedClientRepository;
 import org.springframework.security.oauth2.client.web.server.WebSessionServerOAuth2AuthorizedClientRepository;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -30,9 +29,8 @@ import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.authentication.logout.DelegatingServerLogoutHandler;
 import org.springframework.security.web.server.authentication.logout.RedirectServerLogoutSuccessHandler;
 import org.springframework.security.web.server.authentication.logout.SecurityContextServerLogoutHandler;
-import org.springframework.security.web.server.authentication.logout.ServerLogoutSuccessHandler;
 import org.springframework.security.web.server.authentication.logout.WebSessionServerLogoutHandler;
-import org.springframework.security.web.server.context.NoOpServerSecurityContextRepository;
+import org.springframework.security.web.server.context.WebSessionServerSecurityContextRepository;
 import org.springframework.security.web.server.csrf.CookieServerCsrfTokenRepository;
 import org.springframework.security.web.server.csrf.CsrfServerLogoutHandler;
 import org.springframework.security.web.server.csrf.ServerCsrfTokenRequestAttributeHandler;
@@ -42,8 +40,8 @@ import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import com.Mercurius.ApiGateway.filter.CsrfCheckFilter;
+import com.Mercurius.ApiGateway.filter.CustomRedirectFilter;
 
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
@@ -52,7 +50,7 @@ import reactor.core.publisher.Mono;
 @Slf4j
 
 public class MercuriusSecurityConfig {
-	//InMemoryReactiveClientRegistrationRepository 
+	// InMemoryReactiveClientRegistrationRepository
 
 	public MercuriusSecurityConfig() {
 		super();
@@ -101,12 +99,15 @@ public class MercuriusSecurityConfig {
 			@Override
 			public void customize(LogoutSpec t) {
 				// TODO Auto-generated method stub
+				RedirectServerLogoutSuccessHandler redirectserverlogoutHandler = new RedirectServerLogoutSuccessHandler();
+				URI logoutSuccessUrl = URI.create("http://localhost:1312/home");
+				redirectserverlogoutHandler.setLogoutSuccessUrl(logoutSuccessUrl);
 				DelegatingServerLogoutHandler delegatingServerLogoutHandler = new DelegatingServerLogoutHandler(
 						new SecurityContextServerLogoutHandler(), new CsrfServerLogoutHandler(csrfTokenRepository),
-						new WebSessionServerLogoutHandler());
-				t.logoutUrl("/logout").logoutSuccessHandler(new RedirectServerLogoutSuccessHandler())
-					//	.logoutSuccessHandler(createLogoutSuccessHandler()
-							//	)
+						new WebSessionServerLogoutHandler(), new KeycloakLogoutHandler());
+				t.logoutUrl("/logout").logoutSuccessHandler(redirectserverlogoutHandler)
+						// .logoutSuccessHandler(createLogoutSuccessHandler()
+						// )
 
 						.logoutHandler(delegatingServerLogoutHandler);
 
@@ -121,9 +122,9 @@ public class MercuriusSecurityConfig {
 		serverHttpSecurity
 
 				// Statefull session management for browser-based OAuth2 login
-				// .securityContextRepository(new WebSessionServerSecurityContextRepository())
+				.securityContextRepository(new WebSessionServerSecurityContextRepository())
 				// for stateless
-				.securityContextRepository(NoOpServerSecurityContextRepository.getInstance())
+				// .securityContextRepository(NoOpServerSecurityContextRepository.getInstance())
 
 				.authorizeExchange(exchange -> exchange.pathMatchers("/mercurius/accounts/**")
 						.hasAuthority("SCOPE_admin").pathMatchers("/mercurius/products/**").authenticated()
