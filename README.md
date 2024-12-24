@@ -1,11 +1,12 @@
 # README
-
+#
 This README would normally document whatever steps are necessary to get your application up and running.
 
 ### What is this repository for?
 
-Mercurius is a microservices-based platform designed to offer flexible and scalable solutions for modern applications. This project integrates multiple microservices to deliver seamless functionality, efficient communication, and robust security. It is ideal for building dynamic, scalable, and modular applications in a cloud environment.
+Mercurius is a microservices-based demo project designed to demonstrate how multiple microservices work together in a distributed system. It integrates several services to showcase key microservices concepts such as communication, scalability, resiliency, service discovery, and secure interactions in a cloud-native environment.
 
+The project is ideal for learning how microservices interact in practice, handling real-world concerns like fault tolerance, high availability, and smooth communication between services.
 ### Key Features
 
 ### Authentication Service
@@ -58,13 +59,18 @@ Mercurius adheres to modern security best practices, ensuring proper authenticat
 ### Getting Started
 
 To set up and run Mercurius, follow the detailed installation and deployment instructions in the repository's documentation.
+### Technology Stack
+Backend: Java, Spring Boot
+Microservices Communication: REST APIs, Message Queues (e.g., RabbitMQ)
+Security: JWT Authentication, OAuth 2.0
+Database: H2 (for development), MySQL (for production)
+//Cloud: AWS (Elastic Beanstalk, RDS, EC2)
+Other Tools: Docker, Kubernetes (for containerization and orchestration)
 
-### How do I get set up?
 
-Ensure you have the necessary Kubernetes environment and relevant configurations for a smooth experience.
 
 ### Who do I talk to?
 
 netfreaker
 
-- Repo owner or admin
+- Repo owner 
