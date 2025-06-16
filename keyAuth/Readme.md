@@ -116,7 +116,7 @@ This interface defines all Keycloak operations supported by the service.
 
 **Hanuma Ramavath**
 Backend Developer | Spring • Keycloak • Microservices • AWS
-🔗 GitHub: [@hanumaramavath](https://github.com/hanumaramavath)
+🔗 GitHub: [@hanumaramavath](https://github.com/netfreaker-ally)
 
 ---
 
