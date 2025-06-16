@@ -1,6 +1,3 @@
-Thanks for the background, Hanuma. Based on your description and the architectural purpose of the `bridge` service — designed initially as a central hub for inter-service communication using **FeignClients** and **WebClient**, even though it later became partially redundant due to API Gateway — here is a professional and honest `README.md` for the **Bridge Service** in your `mercurius` project:
-
----
 
 ````markdown
 # 🌉 Bridge Service - Mercurius Microservices
